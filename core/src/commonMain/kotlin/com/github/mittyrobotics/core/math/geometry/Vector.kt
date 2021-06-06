@@ -26,6 +26,14 @@ public data class Vector(var x: Double = 0.0, var y: Double = 0.0) {
 
     public operator fun minus(other: Vector): Vector = Vector(x - other.x, y - other.y)
 
+    public operator fun plus(value: Double): Vector = Vector(x + value, y + value)
+
+    public operator fun minus(value: Double): Vector = Vector(x - value, y - value)
+
+    public operator fun times(other: Vector): Vector = Vector(x * other.x, y * other.y)
+
+    public operator fun div(other: Vector): Vector = Vector(x / other.x, y / other.y)
+
     public operator fun times(scalar: Double): Vector = Vector(x * scalar, y * scalar)
 
     public operator fun div(scalar: Double): Vector = Vector(x / scalar, y / scalar)
@@ -38,6 +46,26 @@ public data class Vector(var x: Double = 0.0, var y: Double = 0.0) {
     public operator fun minusAssign(other: Vector) {
         x -= other.x
         y -= other.y
+    }
+
+    public operator fun plusAssign(value: Double) {
+        x += value
+        y += value
+    }
+
+    public operator fun minusAssign(value: Double) {
+        x -= value
+        y -= value
+    }
+
+    public operator fun timesAssign(other: Vector) {
+        x *= other.x
+        y *= other.y
+    }
+
+    public operator fun divAssign(other: Vector) {
+        x /= other.x
+        y /= other.y
     }
 
     public operator fun timesAssign(scalar: Double) {
