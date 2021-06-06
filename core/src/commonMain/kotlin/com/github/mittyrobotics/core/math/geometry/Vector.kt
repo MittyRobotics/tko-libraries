@@ -4,6 +4,16 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 public data class Vector(var x: Double = 0.0, var y: Double = 0.0) {
+    public constructor(magnitude: Double, direction: Rotation) : this(
+        direction.cos() * magnitude,
+        direction.sin() * magnitude
+    )
+
+    public constructor(
+        magnitude: Double,
+        direction: Rotation,
+        origin: Vector
+    ) : this(direction.cos() * magnitude + origin.x, direction.sin() * magnitude + origin.y)
 
     /**
      * Calculates the distance from this [Vector] to `other`.

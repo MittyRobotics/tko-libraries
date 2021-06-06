@@ -1,10 +1,12 @@
 package com.github.mittyrobotics.core.math.geometry
 
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.tan
+import com.github.mittyrobotics.core.math.units.AngularVelocity
+import kotlin.math.*
 
 public data class Rotation(var radians: Double = 0.0) {
+    public constructor(x: Double, y: Double) : this(atan2(y, x))
+    public constructor(vector: Vector) : this(atan2(vector.y, vector.x))
+
     /**
      * Returns the tangent of the radians
      *
@@ -63,5 +65,4 @@ public data class Rotation(var radians: Double = 0.0) {
     }
 
     override fun toString(): String = ("Rotation($radians)")
-
 }
