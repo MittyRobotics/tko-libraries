@@ -15,5 +15,11 @@ public data class Transform(val vector: Vector = Vector(), val rotation: Rotatio
      * @return the distance from this [Vector] to `other`.
      */
     public fun distance(other: Transform): Double = sqrt((other.vector.x - vector.x).pow(2.0) + (other.vector.y - vector.y).pow(2.0))
+    public fun rotateAround(origin: Vector, rotation: Rotation): Transform {
+        val pos: Vector = (vector - origin).rotateBy(rotation) + origin
+        val rot: Rotation = rotation + rotation
+
+        return Transform(pos, rot)
+    }
 
 }

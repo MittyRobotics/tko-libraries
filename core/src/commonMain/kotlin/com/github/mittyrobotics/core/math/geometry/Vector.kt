@@ -32,6 +32,17 @@ public data class Vector(var x: Double = 0.0, var y: Double = 0.0) {
      */
     public fun magnitude(): Double = sqrt(x.pow(2.0) + y.pow(2.0))
 
+    /**
+     * Rotates this [Vector] by [Rotation] `rotation` around the origin (0,0) of a standard
+     * cartesian coordinate plane.
+     *
+     * @param rotation the [Rotation] to rotate this [Vector] by
+     * @return a new [Vector] containing the rotated coordinates
+     */
+    public fun rotateBy(rotation: Rotation): Vector =
+        Vector(x * rotation.cos() - y * rotation.sin(), x * rotation.sin() + y * rotation.cos())
+
+
     public operator fun plus(other: Vector): Vector = Vector(x + other.x, y + other.y)
 
     public operator fun minus(other: Vector): Vector = Vector(x - other.x, y - other.y)
@@ -91,5 +102,7 @@ public data class Vector(var x: Double = 0.0, var y: Double = 0.0) {
     override fun toString(): String {
         return ("Vector($x,$y)")
     }
+
+
 }
 

@@ -14,7 +14,7 @@ public abstract class Parametric {
      * @param t the parameter
      * @return the [Vector] at the parameter `t`.
      */
-    public abstract fun getPosition(t: Double): Vector
+    public abstract fun getVector(t: Double): Vector
 
     /**
      * Returns the [Rotation] along the [Parametric] at `t` where `0 <= t <= 1`.
@@ -65,7 +65,7 @@ public abstract class Parametric {
         var length = 0.0
         var t = startT
         while (t < endT) {
-            length += getPosition(t).distance(getPosition(t - (endT - startT) / steps))
+            length += getVector(t).distance(getVector(t - (endT - startT) / steps))
             t += (endT - startT) / steps
         }
         return length

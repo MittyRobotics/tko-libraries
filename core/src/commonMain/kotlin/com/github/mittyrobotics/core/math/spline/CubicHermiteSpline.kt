@@ -18,7 +18,7 @@ public class CubicHermiteSpline(
      * @param t the parameter
      * @return the [Vector] at the parameter `t`.
      */
-    override fun getPosition(t: Double): Vector {
+    override fun getVector(t: Double): Vector {
         //Cubic hermite spline equations https://rose-hulman.edu/~finn/CCLI/Notes/day09.pdf#page=2
         val h0: Double = 1 - 3 * t * t + 2 * t * t * t
         val h1: Double = t - 2 * t * t + t * t * t
@@ -46,7 +46,7 @@ public class CubicHermiteSpline(
      * @param t the parameter
      * @return the [Transform] at the parameter `t`.
      */
-    override fun getTransform(t: Double): Transform = Transform(getPosition(t), getRotation(t))
+    override fun getTransform(t: Double): Transform = Transform(getVector(t), getRotation(t))
 
     /**
      * Returns the curvature at point `t` on the [Parametric].

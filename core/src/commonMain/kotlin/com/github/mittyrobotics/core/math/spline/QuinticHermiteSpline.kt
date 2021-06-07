@@ -38,7 +38,7 @@ public class QuinticHermiteSpline(
      * @param t the parameter
      * @return the [Vector] at the parameter `t`.
      */
-    override fun getPosition(t: Double): Vector {
+    override fun getVector(t: Double): Vector {
         //Quintic hermite spline equations https://rose-hulman.edu/~finn/CCLI/Notes/day09.pdf#page=4
         val h0 = -6 * t * t * t * t * t + 15 * t * t * t * t - 10 * t * t * t + 1
         val h1 = -3 * t * t * t * t * t + 8 * t * t * t * t - 6 * t * t * t + t
@@ -68,7 +68,7 @@ public class QuinticHermiteSpline(
      * @param t the parameter
      * @return the [Transform] at the parameter `t`.
      */
-    override fun getTransform(t: Double): Transform = Transform(getPosition(t), getRotation(t))
+    override fun getTransform(t: Double): Transform = Transform(getVector(t), getRotation(t))
 
     /**
      * Returns the curvature at point `t` on the [Parametric].
