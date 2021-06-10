@@ -1,3 +1,4 @@
 package com.github.mittyrobotics.motion
 
-public data class State(val states: Array<Double>)
+//Data classes dont support varargs :(
+public class State(public vararg val states: Double)
