@@ -21,6 +21,7 @@ kotlin {
             dependencies {
                 implementation( "org.jfree:jfreechart:1.5.0")
                 implementation(project(":core"))
+                implementation(project(":motion"))
             }
         }
     }
