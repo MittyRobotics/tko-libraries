@@ -32,12 +32,11 @@ import com.github.mittyrobotics.motion.profiles.TrapezoidalMotionProfile
 import kotlin.math.PI
 
 public fun main() {
-    val profile = TrapezoidalMotionProfile(State(arrayOf(0.0, 0.0)), State(arrayOf(30.0, 0.0)), State(arrayOf(10.0, 10.0)), State(arrayOf(5.0, 10.0)))
+    val profile = TrapezoidalMotionProfile(State(arrayOf(0.0, 0.0)), State(arrayOf(10.0, 0.0)), State(arrayOf(50.0, 10.0)), State(arrayOf(5.0, 10.0)))
     val graph = MotorGraph()
     for(i in 0..100){
-        val t = (i.toDouble()/100.0)*profile.totalTime()
+        val t = (i.toDouble()/100.0)*profile.totalTime
         val state = profile.getStateAtTime(t)
-        println(profile.totalTime())
         graph.addPosition(state.states[0], t)
         graph.addVelocity(state.states[1], t)
         graph.addAcceleration(state.states[2], t)

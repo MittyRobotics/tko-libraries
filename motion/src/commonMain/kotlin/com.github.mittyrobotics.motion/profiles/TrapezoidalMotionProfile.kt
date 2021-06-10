@@ -1,6 +1,7 @@
 package com.github.mittyrobotics.motion.profiles
 
 import com.github.mittyrobotics.motion.State
+import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.sqrt
 
@@ -10,30 +11,31 @@ public class TrapezoidalMotionProfile(
     maxStates: State,
     minState: State
 ) {
-    private val am = maxStates.states[1]
-    private val dm = minState.states[1]
-    private val vi = initialState.states[1]
-    private val vf = finalState.states[1]
     private val pi = initialState.states[0]
-    private val pt = finalState.states[0] - pi
-    private var vm = min(maxStates.states[0], sqrt(2*pt*am*dm*(dm+am))/(dm+am))
-    private val ta = (vm - vi) / am
+    private val pt = finalState.states[0]
+    private var am = maxStates.states[1]*(if(pt-pi<0){-1}else{1})
+    private var dm = minState.states[1]*(if(pt-pi<0){-1}else{1})
+    private val vi = initialState.states[1]
+    private val vf = -finalState.states[1]
+    private var vm = min(abs(maxStates.states[0]), abs(sqrt(2*(pt-pi)*am*dm*(dm+am))/(dm+am)))*(if(pt-pi<0){-1}else{1})
+    public val accelerationTime: Double = (vm - vi) / am
     private val xds = (vm - vf) / -dm
     private val yce = pt + pdb(xds)
-    private val tc = (yce + vm * ta - pa(ta)) / vm
-    private val h = tc - xds
-    private val td = 2 * vf / dm + h
+    public val cruiseTime: Double = (yce + vm * accelerationTime - pa(accelerationTime)) / vm
+    private val h = cruiseTime - xds
+    public val decelerationTime: Double = 2 * vf / dm + h
+    public val totalTime: Double = decelerationTime
 
     public fun getStateAtTime(t: Double): State = when{
-        t <= ta -> State(arrayOf(pa(t), dpa(t), ddpa()))
-        t <= tc -> State(arrayOf(pc(t), dpc(), ddpc()))
+        t <= accelerationTime -> State(arrayOf(pa(t), dpa(t), ddpa()))
+        t <= cruiseTime -> State(arrayOf(pc(t), dpc(), ddpc()))
         else -> State(arrayOf(pd(t), dpd(t), ddpd()))
     }
 
     private fun pa(t: Double) = am * (t * t) / 2 + vi * t + pi
     private fun dpa(t: Double) = am * t + vi
     private fun ddpa() = am
-    private fun pc(t: Double) = vm * (t - ta) + pa(ta)
+    private fun pc(t: Double) = vm * (t - accelerationTime) + pa(accelerationTime)
     private fun dpc() = vm
     private fun ddpc() = 0.0
     private fun pdb(t: Double) = -dm * (t * t) / 2 + vf * t
@@ -42,6 +44,4 @@ public class TrapezoidalMotionProfile(
     private fun pd(t: Double) = pdb(t - h) + pt
     private fun dpd(t: Double) = dpdb(t - h)
     private fun ddpd() = ddpdb()
-
-    public fun totalTime(): Double = td
 }
