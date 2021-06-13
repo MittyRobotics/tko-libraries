@@ -1,7 +1,5 @@
 package com.github.mittyrobotics.core.math.linalg
 
-import space.kscience.kmath.linear.RealMatrixContext.dot
-import space.kscience.kmath.misc.UnstableKMathAPI
 import space.kscience.kmath.real.*
 import kotlin.math.floor
 import kotlin.math.ln
@@ -13,7 +11,6 @@ import kotlin.math.pow
  *
  * https://github.com/jblas-project/jblas/blob/main/src/main/java/org/jblas/MatrixFunctions.java#L406
  */
-@UnstableKMathAPI
 public fun RealMatrix.expm(): RealMatrix {
     val c0 = 1.0
     val c1 = 0.5
@@ -37,20 +34,16 @@ public fun RealMatrix.expm(): RealMatrix {
     val As4 = As2.dot(As2)
     val As6 = As4.dot(As2)
 
-
     val I = identity(n)
     val U = c0 * I + c2 * As2 + c4 * As4 + (c6 * I + c8 * As2 + c10 * As4 + c12 * As6) * As6
     val V = c1 * I + c3 * As2 + c5 * As4 + (c7 * I + c9 * As2 + c11 * As4 + c13 * As6) * As6
-
 
     val AV = As .dot(V)
     var N = U + AV
     var D = U - AV
 
-    D *= 100.0
-    N *= 100.0
-
-    var F = LUDecomposition(D).solve(N)
+    //TODO: Solve
+    var F = D
 
     for(i in 0 until j){
         F = F.dot(F)
@@ -95,60 +88,4 @@ public fun RealMatrix.copy(): RealMatrix{
         }
     }
     return mat.toMatrix()
-}
-
-public fun RealMatrix.subMatrix(i0: Int, i1: Int, j0: Int, j1: Int): RealMatrix {
-    val X = zeros(i1 - i0 + 1, j1 - j0 + 1)
-    val B: Array<DoubleArray> = X.toDoubleArray()
-    try {
-        for (i in i0..i1) {
-            for (j in j0..j1) {
-                B[i - i0][j - j0] = toDoubleArray()[i][j]
-            }
-        }
-    } catch (e: Exception) {
-    }
-    return B.toMatrix()
-}
-
-public fun RealMatrix.subMatrix(r: IntArray, c: IntArray): RealMatrix {
-    val X = zeros(r.size, c.size)
-    val B: Array<DoubleArray> = X.toDoubleArray()
-    try {
-        for (i in r.indices) {
-            for (j in c.indices) {
-                B[i][j] = toDoubleArray()[r[i]][c[j]]
-            }
-        }
-    } catch (e: Exception) {
-    }
-    return B.toMatrix()
-}
-
-public fun RealMatrix.subMatrix(i0: Int, i1: Int, c: IntArray): RealMatrix {
-    val X = zeros(i1 - i0 + 1, c.size)
-    val B: Array<DoubleArray> = X.toDoubleArray()
-    try {
-        for (i in i0..i1) {
-            for (j in c.indices) {
-                B[i - i0][j] = this.toDoubleArray()[i][c[j]]
-            }
-        }
-    } catch (e: Exception) {
-    }
-    return B.toMatrix()
-}
-
-public fun RealMatrix.subMatrix(r: IntArray, j0: Int, j1: Int): RealMatrix {
-    val X = zeros(r.size, j1 - j0 + 1)
-    val B: Array<DoubleArray> = X.toDoubleArray()
-    try {
-        for (i in r.indices) {
-            for (j in j0..j1) {
-                B[i][j - j0] = this.toDoubleArray()[r[i]][j]
-            }
-        }
-    } catch (e: Exception) {
-    }
-    return B.toMatrix()
 }

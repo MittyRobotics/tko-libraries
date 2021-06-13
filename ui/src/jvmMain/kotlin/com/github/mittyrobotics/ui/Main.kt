@@ -23,10 +23,6 @@
  */
 package com.github.mittyrobotics.ui
 
-import com.github.mittyrobotics.core.math.linalg.LUDecomposition
-import com.github.mittyrobotics.core.math.linalg.expm
-import space.kscience.kmath.real.toMatrix
-
 public fun main(){
 
 }
