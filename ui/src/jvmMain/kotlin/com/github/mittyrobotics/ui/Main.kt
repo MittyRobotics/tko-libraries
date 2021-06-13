@@ -23,22 +23,10 @@
  */
 package com.github.mittyrobotics.ui
 
-import com.github.mittyrobotics.core.math.geometry.Rotation
-import com.github.mittyrobotics.core.math.geometry.Transform
-import com.github.mittyrobotics.core.math.geometry.Vector
-import com.github.mittyrobotics.core.math.spline.QuinticHermiteSpline
-import com.github.mittyrobotics.motion.State
-import com.github.mittyrobotics.motion.profiles.TrapezoidalMotionProfile
-import kotlin.math.PI
+import com.github.mittyrobotics.core.math.linalg.LUDecomposition
+import com.github.mittyrobotics.core.math.linalg.expm
+import space.kscience.kmath.real.toMatrix
 
-public fun main() {
-    val profile = TrapezoidalMotionProfile(State(0.0, 0.0), State(10.0, 0.0), State(50.0, 10.0), State(5.0, 10.0))
-    val graph = MotorGraph()
-    for(i in 0..100){
-        val t = (i.toDouble()/100.0)*profile.totalTime
-        val state = profile.getStateAtTime(t)
-        graph.addPosition(state.states[0], t)
-        graph.addVelocity(state.states[1], t)
-        graph.addAcceleration(state.states[2], t)
-    }
+public fun main(){
+
 }
