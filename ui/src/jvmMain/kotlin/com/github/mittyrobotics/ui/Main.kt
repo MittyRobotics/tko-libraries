@@ -23,6 +23,11 @@
  */
 package com.github.mittyrobotics.ui
 
-public fun main(){
+import com.github.mittyrobotics.core.math.linalg.Matrix
 
+public fun main(){
+    val mat = Matrix(arrayOf(doubleArrayOf(1.0, 2.0), doubleArrayOf(3.0, 4.0)))
+    val mat1 = Matrix(arrayOf(doubleArrayOf(5.0, 6.0), doubleArrayOf(7.0, 8.0)))
+    mat *= 2.0
+    println(mat)
 }
