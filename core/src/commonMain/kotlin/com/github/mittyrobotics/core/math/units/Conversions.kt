@@ -12,7 +12,7 @@ public sealed interface MeasurementUnit {
 
 @Suppress("MemberVisibilityCanBePrivate")
 @JvmInline
-public value class Distance private constructor(public override val _value: Double):MeasurementUnit{
+public value class Distance private constructor(public override val _value: Double): MeasurementUnit {
     public val meters: Double
         get() = _value
     public val inches: Double
@@ -26,7 +26,7 @@ public value class Distance private constructor(public override val _value: Doub
 
 @Suppress("MemberVisibilityCanBePrivate")
 @JvmInline
-public value class Velocity private constructor(public override val _value: Double):MeasurementUnit {
+public value class Velocity private constructor(public override val _value: Double): MeasurementUnit {
     public val meters: Double
         get() = _value
     public val inches: Double
@@ -40,7 +40,7 @@ public value class Velocity private constructor(public override val _value: Doub
 
 @Suppress("MemberVisibilityCanBePrivate")
 @JvmInline
-public value class Acceleration private constructor(public override val _value: Double):MeasurementUnit {
+public value class Acceleration private constructor(public override val _value: Double): MeasurementUnit {
     public val meters: Double
         get() = _value
     public val inches: Double
@@ -54,7 +54,7 @@ public value class Acceleration private constructor(public override val _value: 
 
 @Suppress("MemberVisibilityCanBePrivate")
 @JvmInline
-public value class Angle private constructor(public override val _value: Double):MeasurementUnit{
+public value class Angle private constructor(public override val _value: Double): MeasurementUnit {
     public val degrees: Double
         get() = _value * (180 / PI)
 
@@ -66,7 +66,7 @@ public value class Angle private constructor(public override val _value: Double)
 
 @Suppress("MemberVisibilityCanBePrivate")
 @JvmInline
-public value class AngularVelocity private constructor(public override val _value: Double):MeasurementUnit{
+public value class AngularVelocity private constructor(public override val _value: Double): MeasurementUnit {
     public val degrees: Double
         get() = _value * (180 / PI)
 
@@ -78,7 +78,7 @@ public value class AngularVelocity private constructor(public override val _valu
 
 @Suppress("MemberVisibilityCanBePrivate")
 @JvmInline
-public value class AngularAcceleration private constructor(public override val _value: Double):MeasurementUnit{
+public value class AngularAcceleration private constructor(public override val _value: Double): MeasurementUnit {
     public val degrees: Double
         get() = _value * (180 / PI)
 
@@ -90,7 +90,7 @@ public value class AngularAcceleration private constructor(public override val _
 
 @Suppress("MemberVisibilityCanBePrivate")
 @JvmInline
-public value class Mass private constructor(public override val _value: Double):MeasurementUnit{
+public value class Mass private constructor(public override val _value: Double): MeasurementUnit {
     public val pounds: Double
         get() = _value * 2.205
 

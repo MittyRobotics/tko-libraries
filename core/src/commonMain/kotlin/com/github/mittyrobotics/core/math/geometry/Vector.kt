@@ -10,9 +10,9 @@ public data class Vector(var x: Double = 0.0, var y: Double = 0.0) {
     )
 
     public constructor(
-        magnitude: Double,
-        direction: Rotation,
-        origin: Vector
+            magnitude: Double,
+            direction: Rotation,
+            origin: Vector
     ) : this(direction.cos() * magnitude + origin.x, direction.sin() * magnitude + origin.y)
 
     /**

@@ -7,10 +7,10 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 public class CubicHermiteSpline(
-    public val transform0: Transform,
-    public val transform1: Transform,
-    public val velocity0: Vector = Vector(transform0.distance(transform1), transform0.rotation),
-    public val velocity1: Vector = Vector(transform0.distance(transform1), transform1.rotation)
+        public val transform0: Transform,
+        public val transform1: Transform,
+        public val velocity0: Vector = Vector(transform0.distance(transform1), transform0.rotation),
+        public val velocity1: Vector = Vector(transform0.distance(transform1), transform1.rotation)
 ) : Parametric() {
     /**
      * Returns the [Vector] along the [Parametric] at `t` where `0 <= t <= 1`.

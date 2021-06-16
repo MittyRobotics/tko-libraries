@@ -7,18 +7,18 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 public class QuinticHermiteSpline(
-    public val transform0: Transform,
-    public val transform1: Transform,
-    public val velocity0: Vector = Vector(transform0.distance(transform1), transform0.rotation),
-    public val velocity1: Vector = Vector(transform0.distance(transform1), transform1.rotation),
-    public val acceleration0: Vector = Vector(),
-    public val acceleration1: Vector = Vector()
+        public val transform0: Transform,
+        public val transform1: Transform,
+        public val velocity0: Vector = Vector(transform0.distance(transform1), transform0.rotation),
+        public val velocity1: Vector = Vector(transform0.distance(transform1), transform1.rotation),
+        public val acceleration0: Vector = Vector(),
+        public val acceleration1: Vector = Vector()
 ) : Parametric() {
     public constructor(
-        transform0: Transform,
-        transform1: Transform,
-        curvature0: Double,
-        curvature1: Double
+            transform0: Transform,
+            transform1: Transform,
+            curvature0: Double,
+            curvature1: Double
     ) : this(
         transform0,
         transform1,

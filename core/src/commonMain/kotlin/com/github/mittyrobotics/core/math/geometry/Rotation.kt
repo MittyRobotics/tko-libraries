@@ -1,6 +1,5 @@
 package com.github.mittyrobotics.core.math.geometry
 
-import com.github.mittyrobotics.core.math.units.AngularVelocity
 import kotlin.math.*
 
 public data class Rotation(var radians: Double = 0.0) {

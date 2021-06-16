@@ -15,13 +15,25 @@ kotlin {
     explicitApi()
 
     jvm()
+    mingwX64{
+        binaries{
+            executable {
+                entryPoint = "com.github.mittyrobotics.ui.main"
+            }
+
+        }
+    }
 
     sourceSets {
-        commonMain {
+        commonMain{
             dependencies {
-                implementation( "org.jfree:jfreechart:1.5.0")
                 implementation(project(":core"))
                 implementation(project(":motion"))
+            }
+        }
+        val jvmMain by getting {
+            dependencies {
+                implementation( "org.jfree:jfreechart:1.5.0")
             }
         }
     }

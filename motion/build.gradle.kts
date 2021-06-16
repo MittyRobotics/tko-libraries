@@ -13,6 +13,7 @@ kotlin {
     explicitApi()
 
     jvm()
+    mingwX64()
 
     sourceSets {
         commonMain {

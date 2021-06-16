@@ -84,8 +84,8 @@ public object GraphUtil {
     }
 
     public fun parametric(
-        parametric: Parametric, stepInterval: Double,
-        arrowWidth: Double
+            parametric: Parametric, stepInterval: Double,
+            arrowWidth: Double
     ): Array<Vector> {
         val positions: ArrayList<Vector> = ArrayList<Vector>()
         var t = 0.0
