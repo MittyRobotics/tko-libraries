@@ -1,5 +1,5 @@
 package com.github.mittyrobotics.motion.models
 
-public abstract class Model() {
+import com.github.mittyrobotics.core.math.linalg.Matrix
 
-}
+public data class Model(public val A: Matrix, public val B: Matrix, public val C: Matrix, public val D: Matrix)

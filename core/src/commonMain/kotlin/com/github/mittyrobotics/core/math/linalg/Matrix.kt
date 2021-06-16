@@ -1,5 +1,7 @@
 package com.github.mittyrobotics.core.math.linalg
 
+import kotlin.math.exp
+
 public class Matrix(data: Array<DoubleArray>) {
     public var data: Array<DoubleArray> = data
         private set
@@ -42,6 +44,8 @@ public class Matrix(data: Array<DoubleArray>) {
 
     public operator fun times(value: Double): Matrix = times(this, value)
 
+    public operator fun div(value: Double): Matrix = times(this, 1.0/value)
+
     public operator fun plusAssign(other: Matrix) {
         data = plus(other).data
     }
@@ -65,6 +69,14 @@ public class Matrix(data: Array<DoubleArray>) {
     public operator fun timesAssign(value: Double) {
         data = times(value).data
     }
+
+    public operator fun divAssign(value: Double) {
+        data = div(value).data
+    }
+
+    public fun max(): Double = max(this)
+
+    public fun expm(): Matrix = expm(this)
 
     public companion object {
         public fun fromRowMajor(rows: Int, cols: Int, data: DoubleArray): Matrix {
