@@ -24,8 +24,31 @@
 package com.github.mittyrobotics.ui
 
 import com.github.mittyrobotics.core.math.linalg.Matrix
+import com.github.mittyrobotics.core.math.linalg.hstack
+import com.github.mittyrobotics.core.math.linalg.vstack
+import com.github.mittyrobotics.motion.models.LinearSystem
+import com.github.mittyrobotics.motion.models.motors.DCMotor
+import com.github.mittyrobotics.motion.models.sim
+import com.github.mittyrobotics.motion.models.simNext
+import com.github.mittyrobotics.motion.models.step
+import kotlin.math.pow
 
 public fun main(){
-    val A = Matrix(arrayOf(doubleArrayOf(1.0, 1.0, 0.0), doubleArrayOf(0.0, 0.0, 2.0), doubleArrayOf(0.0, 0.0, -1.0)))
-    println(A.expm())
+    val Kp = 2.0
+    val tau = 1.0
+    val zeta = 0.25
+
+    val A = Matrix(arrayOf(doubleArrayOf(0.0, 1.0), doubleArrayOf(-1.0/tau.pow(2.0), -2.0*zeta/tau)))
+    val B = Matrix(arrayOf(doubleArrayOf(0.0), doubleArrayOf(Kp/tau.pow(2.0))))
+    val C = Matrix(arrayOf(doubleArrayOf(1.0, 0.0)))
+    val D = Matrix(arrayOf(doubleArrayOf(0.0)))
+    val sys = LinearSystem(A, B, C, D)
+
+    val sim = step(sys, 20.0)
+
+    val graph = MotorGraph()
+    for(step in sim){
+        graph.addPosition(step.first[0][0], step.third)
+        graph.addVoltage(step.second[0][0], step.third)
+    }
 }

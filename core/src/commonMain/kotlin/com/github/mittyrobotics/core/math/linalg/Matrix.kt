@@ -1,7 +1,5 @@
 package com.github.mittyrobotics.core.math.linalg
 
-import kotlin.math.exp
-
 public class Matrix(data: Array<DoubleArray>) {
     public var data: Array<DoubleArray> = data
         private set
@@ -11,16 +9,16 @@ public class Matrix(data: Array<DoubleArray>) {
     } else {
         0
     }
-    public fun get2DData(rowMajor: Boolean = true): DoubleArray{
-        val array = DoubleArray(rows*cols)
-        if(rowMajor){
+
+    public fun get2DData(rowMajor: Boolean = true): DoubleArray {
+        val array = DoubleArray(rows * cols)
+        if (rowMajor) {
             for (col in 0 until cols) {
                 for (row in 0 until rows) {
                     array[col + cols * row] = data[row][col]
                 }
             }
-        }
-        else{
+        } else {
             for (row in 0 until rows) {
                 for (col in 0 until cols) {
                     array[row + rows * col] = data[row][col]
@@ -32,6 +30,10 @@ public class Matrix(data: Array<DoubleArray>) {
 
     public operator fun get(index: Int): DoubleArray = data[index]
 
+    public operator fun set(index: Int, value: DoubleArray) {
+        data[index] = value
+    }
+
     public operator fun plus(other: Matrix): Matrix = add(this, other)
 
     public operator fun plus(value: Double): Matrix = add(this, value)
@@ -40,11 +42,11 @@ public class Matrix(data: Array<DoubleArray>) {
 
     public operator fun minus(value: Double): Matrix = subtract(this, value)
 
-    public operator fun times(value: Matrix): Matrix = dot(this, value)
+    public operator fun times(other: Matrix): Matrix = multiply(this, other)
 
     public operator fun times(value: Double): Matrix = times(this, value)
 
-    public operator fun div(value: Double): Matrix = times(this, 1.0/value)
+    public operator fun div(value: Double): Matrix = times(this, 1.0 / value)
 
     public operator fun plusAssign(other: Matrix) {
         data = plus(other).data
@@ -78,6 +80,11 @@ public class Matrix(data: Array<DoubleArray>) {
 
     public fun expm(): Matrix = expm(this)
 
+    public fun transpose(): Matrix = transpose(this)
+
+    public fun subMatrix(startRow: Int = 0, startCol: Int = 0, endRow: Int = rows, endCol: Int = cols): Matrix =
+        subMatrix(this, startRow, startCol, endRow, endCol)
+
     public companion object {
         public fun fromRowMajor(rows: Int, cols: Int, data: DoubleArray): Matrix {
             val array = Array(rows) { DoubleArray(cols) }
@@ -99,7 +106,8 @@ public class Matrix(data: Array<DoubleArray>) {
             return Matrix(array)
         }
 
-        public fun zeros(rows: Int, cols: Int): Matrix = Matrix(Array(rows) { DoubleArray(cols) })
+        public fun zeros(rows: Int, cols: Int): Matrix = fill(rows, cols, 0.0)
+        public fun fill(rows: Int, cols: Int, value: Double): Matrix = Matrix(Array(rows) { DoubleArray(cols) {value} })
         public fun identity(n: Int): Matrix = Matrix(Array(n) { row ->
             DoubleArray(n) { col ->
                 if (row == col) {
