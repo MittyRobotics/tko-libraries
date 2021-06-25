@@ -1,6 +1,6 @@
 package com.github.mittyrobotics.core.math.linalg
 
-public class Matrix(data: Array<DoubleArray>) {
+public open class Matrix(data: Array<DoubleArray>) {
     public var data: Array<DoubleArray> = data
         private set
     public val rows: Int = data.size
@@ -107,7 +107,9 @@ public class Matrix(data: Array<DoubleArray>) {
         }
 
         public fun zeros(rows: Int, cols: Int): Matrix = fill(rows, cols, 0.0)
-        public fun fill(rows: Int, cols: Int, value: Double): Matrix = Matrix(Array(rows) { DoubleArray(cols) {value} })
+        public fun fill(rows: Int, cols: Int, value: Double): Matrix =
+            Matrix(Array(rows) { DoubleArray(cols) { value } })
+
         public fun identity(n: Int): Matrix = Matrix(Array(n) { row ->
             DoubleArray(n) { col ->
                 if (row == col) {
@@ -117,6 +119,9 @@ public class Matrix(data: Array<DoubleArray>) {
                 }
             }
         })
+
+        public fun row(data: DoubleArray): Matrix = Matrix(Array(1) { data })
+        public fun column(data: DoubleArray): Matrix = Matrix(Array(data.size) { doubleArrayOf(data[it]) })
     }
 
     public override fun toString(): String = "Matrix(rows: $rows cols: $cols ${formatMatrixInString(data)})"

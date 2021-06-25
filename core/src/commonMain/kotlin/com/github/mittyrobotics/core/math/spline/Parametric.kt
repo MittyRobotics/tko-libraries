@@ -2,19 +2,19 @@ package com.github.mittyrobotics.core.math.spline
 
 import com.github.mittyrobotics.core.math.geometry.Rotation
 import com.github.mittyrobotics.core.math.geometry.Transform
-import com.github.mittyrobotics.core.math.geometry.Vector
+import com.github.mittyrobotics.core.math.geometry.Vector2D
 import kotlin.math.max
 import kotlin.math.min
 
 
 public abstract class Parametric {
     /**
-     * Returns the [Vector] along the [Parametric] at `t` where `0 <= t <= 1`.
+     * Returns the [Vector2D] along the [Parametric] at `t` where `0 <= t <= 1`.
      *
      * @param t the parameter
-     * @return the [Vector] at the parameter `t`.
+     * @return the [Vector2D] at the parameter `t`.
      */
-    public abstract fun getVector(t: Double): Vector
+    public abstract fun getVector(t: Double): Vector2D
 
     /**
      * Returns the [Rotation] along the [Parametric] at `t` where `0 <= t <= 1`.
@@ -28,8 +28,8 @@ public abstract class Parametric {
      * Returns the [Transform] along the [Parametric] at `t` where `0 <= t <= 1`.
      *
      *
-     * The [Transform] contains the [Vector] and [Rotation], with the [Rotation] being the
-     * tangent angle at the [Vector].
+     * The [Transform] contains the [Vector2D] and [Rotation], with the [Rotation] being the
+     * tangent angle at the [Vector2D].
      *
      * @param t the parameter
      * @return the [Transform] at the parameter `t`.
@@ -45,14 +45,14 @@ public abstract class Parametric {
     public abstract fun getCurvature(t: Double): Double
 
     /**
-     * Returns the 'n'-th derivative of the [Parametric] in the form of a [Vector] containing the x and
+     * Returns the 'n'-th derivative of the [Parametric] in the form of a [Vector2D] containing the x and
      * y value at the parameter `t`.
      *
      * @param t the parameter
      * @param n the derivative degree
-     * @return the 'n'-th derivative [Vector] at the parameter `t`.
+     * @return the 'n'-th derivative [Vector2D] at the parameter `t`.
      */
-    public abstract fun getDerivative(t: Double, n: Int = 1): Vector
+    public abstract fun getDerivative(t: Double, n: Int = 1): Vector2D
 
     /**
      * Computes the estimated length of the parametric by counting the length of each segment for every step. This is
@@ -78,7 +78,7 @@ public abstract class Parametric {
      *
      * @return the estimated length of the parametric.
      */
-    public fun getGaussianQuadratureLength(): Double = getGaussianQuadratureLength(1.0)
+    public open fun getGaussianQuadratureLength(): Double = getGaussianQuadratureLength(1.0)
 
     /**
      * Computes the estimated length of the parametric using 11-point Gaussian quadrature.
@@ -88,10 +88,10 @@ public abstract class Parametric {
      * @param endParam the ending parameter of the parametric.
      * @return the estimated length of the parametric.
      */
-    public fun getGaussianQuadratureLength(endParam: Double): Double = getGaussianQuadratureLength(0.0, endParam)
+    public open fun getGaussianQuadratureLength(endParam: Double): Double = getGaussianQuadratureLength(0.0, endParam)
 
 
-    public fun getGaussianQuadratureLength(startParam: Double, endParam: Double): Double {
+    public open fun getGaussianQuadratureLength(startParam: Double, endParam: Double): Double {
         //11-point Gaussian quadrature coefficients
         val coefficients = arrayOf(
             doubleArrayOf(0.0000000000000000, 0.2729250867779006),
@@ -124,7 +124,7 @@ public abstract class Parametric {
      * @param length length along the spline to get the parameter.
      * @return the parameter of the parametric at the length along the spline.
      */
-    public fun getParameterFromLength(length: Double): Double {
+    public open fun getParameterFromLength(length: Double): Double {
         return getParameterFromLength(length, getGaussianQuadratureLength())
     }
 
@@ -137,7 +137,7 @@ public abstract class Parametric {
      * @param length length along the spline to get the parameter.
      * @return the parameter of the parametric at the length along the spline.
      */
-    public fun getParameterFromLength(length: Double, splineLength: Double): Double {
+    public open fun getParameterFromLength(length: Double, splineLength: Double): Double {
         //Initial guess for the t value
         var t = length / splineLength
 

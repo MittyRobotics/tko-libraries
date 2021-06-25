@@ -4,7 +4,7 @@ import kotlin.math.*
 
 public data class Rotation(var radians: Double = 0.0) {
     public constructor(x: Double, y: Double) : this(atan2(y, x))
-    public constructor(vector: Vector) : this(atan2(vector.y, vector.x))
+    public constructor(vector: Vector2D) : this(atan2(vector.y, vector.x))
 
     /**
      * Returns the tangent of the radians

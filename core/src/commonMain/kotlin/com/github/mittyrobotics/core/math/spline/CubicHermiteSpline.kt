@@ -2,23 +2,23 @@ package com.github.mittyrobotics.core.math.spline
 
 import com.github.mittyrobotics.core.math.geometry.Rotation
 import com.github.mittyrobotics.core.math.geometry.Transform
-import com.github.mittyrobotics.core.math.geometry.Vector
+import com.github.mittyrobotics.core.math.geometry.Vector2D
 import kotlin.math.pow
 import kotlin.math.sqrt
 
 public class CubicHermiteSpline(
-        public val transform0: Transform,
-        public val transform1: Transform,
-        public val velocity0: Vector = Vector(transform0.distance(transform1), transform0.rotation),
-        public val velocity1: Vector = Vector(transform0.distance(transform1), transform1.rotation)
+    public val transform0: Transform,
+    public val transform1: Transform,
+    public val velocity0: Vector2D = Vector2D(transform0.distance(transform1), transform0.rotation),
+    public val velocity1: Vector2D = Vector2D(transform0.distance(transform1), transform1.rotation)
 ) : Parametric() {
     /**
-     * Returns the [Vector] along the [Parametric] at `t` where `0 <= t <= 1`.
+     * Returns the [Vector2D] along the [Parametric] at `t` where `0 <= t <= 1`.
      *
      * @param t the parameter
-     * @return the [Vector] at the parameter `t`.
+     * @return the [Vector2D] at the parameter `t`.
      */
-    override fun getVector(t: Double): Vector {
+    override fun getVector(t: Double): Vector2D {
         //Cubic hermite spline equations https://rose-hulman.edu/~finn/CCLI/Notes/day09.pdf#page=2
         val h0: Double = 1 - 3 * t * t + 2 * t * t * t
         val h1: Double = t - 2 * t * t + t * t * t
@@ -40,8 +40,8 @@ public class CubicHermiteSpline(
      * Returns the [Transform] along the [Parametric] at `t` where `0 <= t <= 1`.
      *
      *
-     * The [Transform] contains the [Vector] and [Rotation], with the [Rotation] being the
-     * tangent angle at the [Vector].
+     * The [Transform] contains the [Vector2D] and [Rotation], with the [Rotation] being the
+     * tangent angle at the [Vector2D].
      *
      * @param t the parameter
      * @return the [Transform] at the parameter `t`.
@@ -55,8 +55,8 @@ public class CubicHermiteSpline(
      * @return the curvature at the parameter `t`.
      */
     override fun getCurvature(t: Double): Double {
-        val firstDerivative: Vector = getDerivative(t, 1)
-        val secondDerivative: Vector = getDerivative(t, 2)
+        val firstDerivative: Vector2D = getDerivative(t, 1)
+        val secondDerivative: Vector2D = getDerivative(t, 2)
 
         return (firstDerivative.x * secondDerivative.y - secondDerivative.x * firstDerivative.y) / sqrt(
             (firstDerivative.x.pow(
@@ -66,14 +66,14 @@ public class CubicHermiteSpline(
     }
 
     /**
-     * Returns the 'n'-th derivative of the [Parametric] in the form of a [Vector] containing the x and
+     * Returns the 'n'-th derivative of the [Parametric] in the form of a [Vector2D] containing the x and
      * y value at the parameter `t`.
      *
      * @param t the parameter
      * @param n the derivative degree
-     * @return the 'n'-th derivative [Vector] at the parameter `t`.
+     * @return the 'n'-th derivative [Vector2D] at the parameter `t`.
      */
-    override fun getDerivative(t: Double, n: Int): Vector {
+    override fun getDerivative(t: Double, n: Int): Vector2D {
         when (n) {
             1 -> {
                 //First derivative of cubic hermite spline functions
@@ -94,23 +94,23 @@ public class CubicHermiteSpline(
                 return computeFromCoefficients(h0, h1, h2, h3)
             }
             else -> {
-                return Vector()
+                return Vector2D()
             }
         }
     }
 
     /**
-     * Computes the [Vector] from the 4 base coefficients.
+     * Computes the [Vector2D] from the 4 base coefficients.
      *
      * @param h0 base coefficient 1
      * @param h1 base coefficient 2
      * @param h2 base coefficient 3
      * @param h3 base coefficient 4
-     * @return the [Vector] containing the x and y values computed from the coefficients.
+     * @return the [Vector2D] containing the x and y values computed from the coefficients.
      */
-    private fun computeFromCoefficients(h0: Double, h1: Double, h2: Double, h3: Double): Vector {
+    private fun computeFromCoefficients(h0: Double, h1: Double, h2: Double, h3: Double): Vector2D {
         val x: Double = h0 * transform0.vector.x + h1 * velocity0.x + h2 * velocity1.x + h3 * transform1.vector.x
         val y: Double = h0 * transform0.vector.y + h1 * velocity0.y + h2 * velocity1.y + h3 * transform1.vector.y
-        return Vector(x, y)
+        return Vector2D(x, y)
     }
 }

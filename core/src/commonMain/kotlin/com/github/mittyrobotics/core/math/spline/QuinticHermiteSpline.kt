@@ -2,17 +2,17 @@ package com.github.mittyrobotics.core.math.spline
 
 import com.github.mittyrobotics.core.math.geometry.Rotation
 import com.github.mittyrobotics.core.math.geometry.Transform
-import com.github.mittyrobotics.core.math.geometry.Vector
+import com.github.mittyrobotics.core.math.geometry.Vector2D
 import kotlin.math.pow
 import kotlin.math.sqrt
 
 public class QuinticHermiteSpline(
-        public val transform0: Transform,
-        public val transform1: Transform,
-        public val velocity0: Vector = Vector(transform0.distance(transform1), transform0.rotation),
-        public val velocity1: Vector = Vector(transform0.distance(transform1), transform1.rotation),
-        public val acceleration0: Vector = Vector(),
-        public val acceleration1: Vector = Vector()
+    public val transform0: Transform,
+    public val transform1: Transform,
+    public val velocity0: Vector2D = Vector2D(transform0.distance(transform1), transform0.rotation),
+    public val velocity1: Vector2D = Vector2D(transform0.distance(transform1), transform1.rotation),
+    public val acceleration0: Vector2D = Vector2D(),
+    public val acceleration1: Vector2D = Vector2D()
 ) : Parametric() {
     public constructor(
             transform0: Transform,
@@ -22,23 +22,23 @@ public class QuinticHermiteSpline(
     ) : this(
         transform0,
         transform1,
-        acceleration0 = Vector(
+        acceleration0 = Vector2D(
             getAccelerationMagnitudeFromCurvature(curvature0, transform0.distance(transform1)),
             transform0.rotation
         ),
-        acceleration1 = Vector(
+        acceleration1 = Vector2D(
             getAccelerationMagnitudeFromCurvature(curvature1, transform0.distance(transform1)),
             transform1.rotation
         )
     )
 
     /**
-     * Returns the [Vector] along the [Parametric] at `t` where `0 <= t <= 1`.
+     * Returns the [Vector2D] along the [Parametric] at `t` where `0 <= t <= 1`.
      *
      * @param t the parameter
-     * @return the [Vector] at the parameter `t`.
+     * @return the [Vector2D] at the parameter `t`.
      */
-    override fun getVector(t: Double): Vector {
+    override fun getVector(t: Double): Vector2D {
         //Quintic hermite spline equations https://rose-hulman.edu/~finn/CCLI/Notes/day09.pdf#page=4
         val h0 = -6 * t * t * t * t * t + 15 * t * t * t * t - 10 * t * t * t + 1
         val h1 = -3 * t * t * t * t * t + 8 * t * t * t * t - 6 * t * t * t + t
@@ -62,8 +62,8 @@ public class QuinticHermiteSpline(
      * Returns the [Transform] along the [Parametric] at `t` where `0 <= t <= 1`.
      *
      *
-     * The [Transform] contains the [Vector] and [Rotation], with the [Rotation] being the
-     * tangent angle at the [Vector].
+     * The [Transform] contains the [Vector2D] and [Rotation], with the [Rotation] being the
+     * tangent angle at the [Vector2D].
      *
      * @param t the parameter
      * @return the [Transform] at the parameter `t`.
@@ -77,8 +77,8 @@ public class QuinticHermiteSpline(
      * @return the curvature at the parameter `t`.
      */
     override fun getCurvature(t: Double): Double {
-        val firstDerivative: Vector = getDerivative(t, 1)
-        val secondDerivative: Vector = getDerivative(t, 2)
+        val firstDerivative: Vector2D = getDerivative(t, 1)
+        val secondDerivative: Vector2D = getDerivative(t, 2)
 
         return (firstDerivative.x * secondDerivative.y - secondDerivative.x * firstDerivative.y) / sqrt(
             (firstDerivative.x.pow(
@@ -88,14 +88,14 @@ public class QuinticHermiteSpline(
     }
 
     /**
-     * Returns the 'n'-th derivative of the [Parametric] in the form of a [Vector] containing the x and
+     * Returns the 'n'-th derivative of the [Parametric] in the form of a [Vector2D] containing the x and
      * y value at the parameter `t`.
      *
      * @param t the parameter
      * @param n the derivative degree
-     * @return the 'n'-th derivative [Vector] at the parameter `t`.
+     * @return the 'n'-th derivative [Vector2D] at the parameter `t`.
      */
-    override fun getDerivative(t: Double, n: Int): Vector {
+    override fun getDerivative(t: Double, n: Int): Vector2D {
         when (n) {
             1 -> {
                 //First derivative of quintic hermite spline functions
@@ -131,7 +131,7 @@ public class QuinticHermiteSpline(
                 return computeFromCoefficients(h0, h1, h2, h3, h4, h5)
             }
             else -> {
-                return Vector()
+                return Vector2D()
             }
         }
     }
@@ -154,12 +154,12 @@ public class QuinticHermiteSpline(
         h3: Double,
         h4: Double,
         h5: Double
-    ): Vector {
+    ): Vector2D {
         val x: Double =
             h0 * transform0.vector.x + h1 * velocity0.x + h2 * acceleration0.x + h3 * acceleration1.x + h4 * velocity1.x + h5 * transform1.vector.x
         val y: Double =
             h0 * transform0.vector.y + h1 * velocity0.y + h2 * acceleration0.y + h3 * acceleration1.y + h4 * velocity1.y + h5 * transform1.vector.y
-        return Vector(x, y)
+        return Vector2D(x, y)
     }
 
     public companion object {
