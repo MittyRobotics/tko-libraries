@@ -1,7 +1,7 @@
 
 plugins {
     kotlin("multiplatform")
-
+    `maven-publish`
 }
 
 group = "com.github.MittyRobotics"

@@ -11,3 +11,13 @@ repositories {
     mavenCentral()
     maven("https://jitpack.io")
 }
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "com.github.MittyRobotics"
+            artifactId = "tko-libraries"
+            version = "0.1.0"
+        }
+    }
+}
