@@ -5,7 +5,7 @@ import com.github.mittyrobotics.core.math.spline.Parametric
 import kotlin.math.*
 
 
-public class PathFollowerMotionProfile(
+public class PathMotionProfile(
     public val path: Parametric,
     public val maxAcceleration: Double,
     public val maxVelocity: Double,
