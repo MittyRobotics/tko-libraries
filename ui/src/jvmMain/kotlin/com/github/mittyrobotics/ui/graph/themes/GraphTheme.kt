@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.mittyrobotics.ui.themes
+package com.github.mittyrobotics.ui.graph.themes
 
 import java.awt.Color
 

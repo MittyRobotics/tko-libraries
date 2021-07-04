@@ -21,10 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.mittyrobotics.ui
+package com.github.mittyrobotics.ui.graph
 
-import com.github.mittyrobotics.ui.themes.DefaultDarkTheme
-import com.github.mittyrobotics.ui.themes.GraphTheme
+import com.github.mittyrobotics.core.math.geometry.Rotation
+import com.github.mittyrobotics.core.math.geometry.Transform
+import com.github.mittyrobotics.core.math.geometry.Vector2D
+import com.github.mittyrobotics.core.math.spline.Parametric
+import com.github.mittyrobotics.ui.graph.themes.DefaultDarkTheme
+import com.github.mittyrobotics.ui.graph.themes.GraphTheme
 import org.jfree.chart.ChartFactory
 import org.jfree.chart.ChartPanel
 import org.jfree.chart.JFreeChart
@@ -36,12 +40,11 @@ import org.jfree.data.xy.XYDataItem
 import org.jfree.data.xy.XYSeries
 import org.jfree.data.xy.XYSeriesCollection
 import java.awt.Color
-import java.awt.Shape
 import java.text.DecimalFormat
 import java.util.ArrayList
 import javax.swing.BorderFactory
 import javax.swing.JFrame
-import javax.swing.SwingUtilities
+import kotlin.math.PI
 
 public open class Graph @JvmOverloads constructor(
     private val titleName: String = "Graph",
@@ -53,7 +56,7 @@ public open class Graph @JvmOverloads constructor(
     private lateinit var chartPanel: ChartPanel
     private val defaultDataset: XYSeriesCollection = XYSeriesCollection()
     private val defaultRenderer: XYLineAndShapeRenderer = XYLineAndShapeRenderer()
-    private val seriesWithRenderers = ArrayList<XYSeriesWithRenderer>()
+    private val dataList = ArrayList<GraphData>()
     private fun initUI() {
         val chart: JFreeChart = createChart()
         val chartPanel = ChartPanel(chart)
@@ -91,87 +94,23 @@ public open class Graph @JvmOverloads constructor(
         return chart
     }
 
-    public fun addSeries(series: XYSeriesWithRenderer): Int {
-        seriesWithRenderers.add(series)
-        update()
-        return getSeriesIndexFromKey(series.key.toString())
-    }
-
-    public fun addSeries(series: XYSeries): Int {
-        return addSeries(XYSeriesWithRenderer(series))
-    }
-
-    public fun setSeriesRenderer(index: Int, color: Color, showLines: Boolean, showPoints: Boolean, shape: Shape?) {
-        seriesWithRenderers[index].setRenderer(color, showLines, showPoints, shape)
-    }
-
-    public fun setSeriesRenderer(key: String, color: Color, showLines: Boolean, showPoints: Boolean, shape: Shape?) {
-        setSeriesRenderer(getSeriesIndexFromKey(key), color, showLines, showPoints, shape)
-    }
-
-    public fun addToSeries(index: Int, additionSeries: XYSeries) {
-        for (i in 0 until additionSeries.itemCount) {
-            val data: XYDataItem = additionSeries.getDataItem(i)
-            defaultDataset.getSeries(index).add(data)
-        }
-    }
-
-    public fun addToSeries(key: String, additionSeries: XYSeries) {
-        addToSeries(getSeriesIndexFromKey(key), additionSeries)
-    }
-
-    public fun addToSeries(index: Int, dataItem: XYDataItem) {
-        val series = XYSeries("___temporary___", false)
-        series.add(dataItem)
-        addToSeries(index, series)
-    }
-
-    public fun addToSeries(key: String, dataItem: XYDataItem) {
-        addToSeries(getSeriesIndexFromKey(key), dataItem)
-    }
-
-    public fun changeSeries(seriesIndex: Int, newSeries: XYSeries) {
-        SwingUtilities.invokeLater(Runnable {
-            val itemCount: Int = defaultDataset.getSeries(seriesIndex).getItemCount()
-            for (i in 0 until itemCount) {
-                defaultDataset.getSeries(seriesIndex).remove(0)
-            }
-            for (i in 0 until newSeries.getItemCount()) {
-                defaultDataset.getSeries(seriesIndex).add(newSeries.getDataItem(i))
-            }
-        })
-    }
-
-    public fun changeSeries(key: String, newSeries: XYSeries) {
-        changeSeries(getSeriesIndexFromKey(key), newSeries)
-    }
-
-    public fun removeSeries(seriesIndex: Int) {
-        seriesWithRenderers.removeAt(seriesIndex)
+    public fun plot(data: Array<Vector2D>, name: String, lines: Boolean = true, points: Boolean = false, color: Color? = null){
+        dataList.add(GraphData(data, name, lines, points, color))
         update()
     }
 
-    public fun removeSeries(key: String) {
-        removeSeries(getSeriesIndexFromKey(key))
-    }
-
-    public fun getSeriesIndexFromKey(key: String): Int {
-        val index: Int = defaultDataset.getSeriesIndex(key)
-        if (index == -1) {
-            addSeries(XYSeriesWithRenderer.Companion.withLines(key))
-            return defaultDataset.getSeriesIndex(key)
-        }
-        return index
+    public fun plotParametric(parametric: Parametric, name: String, stepInterval: Double = 0.01, arrowWidth: Double = 0.0, lines: Boolean = true, points: Boolean = false, color: Color? = null){
+        dataList.add(GraphData(parametric(parametric, stepInterval, arrowWidth), name, lines, points, color))
+        update()
     }
 
     public fun update() {
         defaultDataset.removeAllSeries()
-        for (i in seriesWithRenderers.indices) {
-            defaultDataset.addSeries(seriesWithRenderers[i])
-            defaultRenderer.setSeriesPaint(i, seriesWithRenderers[i].color)
-            defaultRenderer.setSeriesLinesVisible(i, seriesWithRenderers[i].isShowLines)
-            defaultRenderer.setSeriesShapesVisible(i, seriesWithRenderers[i].isShowShapes)
-            defaultRenderer.setSeriesShape(i, seriesWithRenderers[i].shape)
+        for (i in dataList.indices) {
+            defaultDataset.addSeries(XYSeries(dataList[i].name, false).also {series-> dataList[i].data.forEach { series.add(XYDataItem(it.x, it.y)) } })
+            defaultRenderer.setSeriesPaint(i, dataList[i].color)
+            defaultRenderer.setSeriesLinesVisible(i, dataList[i].lines)
+            defaultRenderer.setSeriesShapesVisible(i, dataList[i].points)
         }
     }
 
@@ -179,10 +118,10 @@ public open class Graph @JvmOverloads constructor(
      * Scales the graph uniformly to fit all points on it
      */
     public fun scaleGraphToFit() {
-        var lowerBound = 9999.0
-        var upperBound = -9999.0
-        var leftBound = 9999.0
-        var rightBound = -9999.0
+        var lowerBound = Double.POSITIVE_INFINITY
+        var upperBound = Double.NEGATIVE_INFINITY
+        var leftBound = Double.POSITIVE_INFINITY
+        var rightBound = Double.NEGATIVE_INFINITY
         for (i in 0 until plot.getDatasetCount()) {
             for (a in 0 until plot.getDataset(i).getSeriesCount()) {
                 for (j in 0 until plot.getDataset(i).getItemCount(a)) {
@@ -272,5 +211,84 @@ public open class Graph @JvmOverloads constructor(
         initUI()
         setGraphTheme(DefaultDarkTheme())
         isVisible = true
+    }
+
+    public companion object{
+        public fun rectangle(centerTransform: Transform, width: Double, height: Double): Array<Vector2D> {
+            val halfWidth = width / 2
+            val halfHeight = height / 2
+
+            // 0------3
+            // |      |
+            // 1------2
+            val p0: Transform = (Transform(Vector2D(-halfHeight, halfWidth)) + centerTransform)
+                .rotateAround(centerTransform.vector, centerTransform.rotation)
+            val p1: Transform = (Transform(Vector2D(-halfHeight, -halfWidth)) + centerTransform)
+                .rotateAround(centerTransform.vector, centerTransform.rotation)
+            val p2: Transform = (Transform(Vector2D(halfHeight, -halfWidth)) + centerTransform)
+                .rotateAround(centerTransform.vector, centerTransform.rotation)
+            val p3: Transform = (Transform(Vector2D(halfHeight, halfWidth)) + centerTransform)
+                .rotateAround(centerTransform.vector, centerTransform.rotation)
+            return arrayOf<Vector2D>(
+                p0.vector, p1.vector, p2.vector, p3.vector, p0.vector
+            )
+        }
+
+        public fun arrow(transform: Transform, length: Double, arrowWidth: Double): Array<Vector2D> {
+            val positions: ArrayList<Vector2D> = ArrayList<Vector2D>()
+
+            //   ^
+            //  /1\
+            // 2 | 3
+            //   |
+            //   |
+            //   |
+            //   0
+
+            val halfWidth = arrowWidth / 2.0
+            val p0: Transform = transform
+            val p1: Transform = transform + Transform(Vector2D(length, 0.0).rotateBy(transform.rotation))
+            val p2: Transform = p1 + Transform(Vector2D(0.0, halfWidth).rotateBy(transform.rotation + Rotation(PI / 4)))
+            val p3: Transform = p1 - Transform(Vector2D(0.0, halfWidth).rotateBy(transform.rotation - Rotation(PI / 4)))
+            positions.add(p0.vector)
+            positions.add(p1.vector)
+            positions.add(p2.vector)
+            positions.add(p1.vector)
+            positions.add(p3.vector)
+            positions.add(p1.vector)
+            return positions.toArray(arrayOfNulls<Vector2D>(0))
+        }
+
+        public fun parametric(
+            parametric: Parametric, stepInterval: Double = 0.01,
+            arrowWidth: Double = 0.0
+        ): Array<Vector2D> {
+            val positions: ArrayList<Vector2D> = ArrayList<Vector2D>()
+            var t = 0.0
+            while (t < 1) {
+                if(arrowWidth == 0.0){
+                    positions.add(parametric.getVector(t))
+                }
+                else{
+                    val arrow: Array<Vector2D> = arrow(parametric.getTransform(t), 0.0, arrowWidth)
+                    for (p in arrow) {
+                        positions.add(p)
+                    }
+                }
+                t += stepInterval
+            }
+            return positions.toArray(arrayOfNulls<Vector2D>(0))
+        }
+
+        public fun parametric(parametric: Parametric, parameterization: DoubleArray, arrowWidth: Double): Array<Vector2D> {
+            val positions: ArrayList<Vector2D> = ArrayList<Vector2D>()
+            for (i in parameterization.indices) {
+                val arrow: Array<Vector2D> = arrow(parametric.getTransform(parameterization[i]), 0.0, arrowWidth)
+                for (p in arrow) {
+                    positions.add(p)
+                }
+            }
+            return positions.toArray(arrayOfNulls<Vector2D>(0))
+        }
     }
 }

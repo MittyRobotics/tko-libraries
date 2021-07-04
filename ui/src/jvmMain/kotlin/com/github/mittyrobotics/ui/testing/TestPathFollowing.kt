@@ -5,12 +5,12 @@ import com.github.mittyrobotics.core.math.geometry.Transform
 import com.github.mittyrobotics.core.math.geometry.Vector2D
 import com.github.mittyrobotics.core.math.spline.Path
 import com.github.mittyrobotics.motion.profiles.PathMotionProfile
-import com.github.mittyrobotics.ui.GraphUtil.populateSeries
+import com.github.mittyrobotics.ui.graph.Graph
 
 public fun main(){
     val path = Path.quinticHermitePath(arrayOf(Transform(), Transform(Vector2D(10.0, -5.0)), Transform(Vector2D(10.0, 5.0), Rotation(0.0))))
     val graph = Graph()
-    graph.addSeries(populateSeries(XYSeriesWithRenderer("Path", isShowShapes = false), GraphUtil.parametric(path, .01, .1)))
+    graph.plotParametric(path, "Path")
     val velocities = mutableListOf<Vector2D>()
     val distancesRemaining = mutableListOf<Vector2D>()
     val curvatures = mutableListOf<Vector2D>()
@@ -28,7 +28,7 @@ public fun main(){
         curvatures.add(Vector2D(t, path.getCurvature(path.getParameterFromLength(distance))))
     }
 
-    graph.addSeries(populateSeries(XYSeriesWithRenderer("Velocity"), velocities.toTypedArray()))
-    graph.addSeries(populateSeries(XYSeriesWithRenderer("Distance Remaining"), distancesRemaining.toTypedArray()))
-    graph.addSeries(populateSeries(XYSeriesWithRenderer("Curvature"), curvatures.toTypedArray()))
+    graph.plot(velocities.toTypedArray(), "Velocity")
+    graph.plot(distancesRemaining.toTypedArray(), "Distance Remaining")
+    graph.plot(curvatures.toTypedArray(), "Curvature")
 }

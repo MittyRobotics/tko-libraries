@@ -23,16 +23,8 @@
  */
 package com.github.mittyrobotics.ui
 
-import com.github.mittyrobotics.core.math.geometry.Rotation
-import com.github.mittyrobotics.core.math.geometry.Transform
-import com.github.mittyrobotics.core.math.geometry.Vector2D
 import com.github.mittyrobotics.core.math.linalg.Matrix
-import com.github.mittyrobotics.core.math.linalg.hstack
-import com.github.mittyrobotics.core.math.linalg.vstack
 import com.github.mittyrobotics.motion.models.LinearSystem
-import com.github.mittyrobotics.motion.models.motors.DCMotor
-import com.github.mittyrobotics.motion.models.sim
-import com.github.mittyrobotics.motion.models.simNext
 import com.github.mittyrobotics.motion.models.step
 import kotlin.math.pow
 
@@ -48,10 +40,4 @@ public fun main(){
     val sys = LinearSystem(A, B, C, D)
 
     val sim = step(sys, 20.0)
-
-    val graph = MotorGraph()
-    for(step in sim){
-        graph.addPosition(step.first[0][0], step.third)
-        graph.addVoltage(step.second[0][0], step.third)
-    }
 }
