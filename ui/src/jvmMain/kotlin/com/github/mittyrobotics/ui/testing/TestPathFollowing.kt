@@ -14,13 +14,13 @@ public fun main(){
     val velocities = mutableListOf<Vector2D>()
     val distancesRemaining = mutableListOf<Vector2D>()
     val curvatures = mutableListOf<Vector2D>()
-    val profile = PathMotionProfile(path, 1.0, 10.0, .5)
+    val profile = PathMotionProfile(path, 1.0, 10.0, 1.0, 0.0, 0.0)
     val dt = 0.02
     var distance = 0.0
     var currentVelocity = profile.startVelocity
     for(i in 0 until 1000){
         val t = i*dt
-        val velocity = profile.calculate(currentVelocity, distance, dt)
+        val velocity = profile.next(dt)
         currentVelocity = velocity
         distance += currentVelocity*dt
         velocities.add(Vector2D(t, velocity))

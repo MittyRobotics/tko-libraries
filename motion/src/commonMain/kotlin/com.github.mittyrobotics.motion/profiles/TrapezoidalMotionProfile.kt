@@ -15,7 +15,7 @@ public class TrapezoidalMotionProfile(
     finalState: State,
     maxStates: State,
     minState: State
-) {
+) : DynamicMotionProfile() {
     private val pi = initialState.states[0]
     private val pt = finalState.states[0]
     private var am = maxStates.states[1] * (if (pt - pi < 0) {
@@ -44,7 +44,12 @@ public class TrapezoidalMotionProfile(
     public val decelerationTime: Double = 2 * vf / dm + h
     public val totalTime: Double = decelerationTime
 
-    public fun getStateAtTime(t: Double): State = when {
+    /**
+     * Calculates the [State] given an absolute time value
+     *
+     * @param t absolute time value to get the state
+     */
+    public override fun getStateAtTime(t: Double): State = when {
         t <= accelerationTime -> State(pa(t), dpa(t), ddpa())
         t <= cruiseTime -> State(pc(t), dpc(), ddpc())
         else -> State(pd(t), dpd(t), ddpd())
