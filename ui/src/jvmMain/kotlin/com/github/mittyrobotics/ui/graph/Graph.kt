@@ -41,7 +41,6 @@ import org.jfree.data.xy.XYSeries
 import org.jfree.data.xy.XYSeriesCollection
 import java.awt.Color
 import java.text.DecimalFormat
-import java.util.ArrayList
 import javax.swing.BorderFactory
 import javax.swing.JFrame
 import kotlin.math.PI
@@ -94,12 +93,26 @@ public open class Graph @JvmOverloads constructor(
         return chart
     }
 
-    public fun plot(data: Array<Vector2D>, name: String, lines: Boolean = true, points: Boolean = false, color: Color? = null){
+    public fun plot(
+        data: Array<Vector2D>,
+        name: String,
+        lines: Boolean = true,
+        points: Boolean = false,
+        color: Color? = null
+    ) {
         dataList.add(GraphData(data, name, lines, points, color))
         update()
     }
 
-    public fun plotParametric(parametric: Parametric, name: String, stepInterval: Double = 0.01, arrowWidth: Double = 0.0, lines: Boolean = true, points: Boolean = false, color: Color? = null){
+    public fun plotParametric(
+        parametric: Parametric,
+        name: String,
+        stepInterval: Double = 0.01,
+        arrowWidth: Double = 0.0,
+        lines: Boolean = true,
+        points: Boolean = false,
+        color: Color? = null
+    ) {
         dataList.add(GraphData(parametric(parametric, stepInterval, arrowWidth), name, lines, points, color))
         update()
     }
@@ -107,7 +120,11 @@ public open class Graph @JvmOverloads constructor(
     public fun update() {
         defaultDataset.removeAllSeries()
         for (i in dataList.indices) {
-            defaultDataset.addSeries(XYSeries(dataList[i].name, false).also {series-> dataList[i].data.forEach { series.add(XYDataItem(it.x, it.y)) } })
+            defaultDataset.addSeries(
+                XYSeries(
+                    dataList[i].name,
+                    false
+                ).also { series -> dataList[i].data.forEach { series.add(XYDataItem(it.x, it.y)) } })
             defaultRenderer.setSeriesPaint(i, dataList[i].color)
             defaultRenderer.setSeriesLinesVisible(i, dataList[i].lines)
             defaultRenderer.setSeriesShapesVisible(i, dataList[i].points)
@@ -122,8 +139,8 @@ public open class Graph @JvmOverloads constructor(
         var upperBound = Double.NEGATIVE_INFINITY
         var leftBound = Double.POSITIVE_INFINITY
         var rightBound = Double.NEGATIVE_INFINITY
-        for (i in 0 until plot.getDatasetCount()) {
-            for (a in 0 until plot.getDataset(i).getSeriesCount()) {
+        for (i in 0 until plot.datasetCount) {
+            for (a in 0 until plot.getDataset(i).seriesCount) {
                 for (j in 0 until plot.getDataset(i).getItemCount(a)) {
                     if (plot.getDataset(i).getYValue(a, j) < lowerBound) {
                         lowerBound = plot.getDataset(i).getYValue(a, j)
@@ -150,10 +167,10 @@ public open class Graph @JvmOverloads constructor(
         } else {
             rightBound
         }
-        val domain: NumberAxis = plot.getDomainAxis() as NumberAxis
+        val domain: NumberAxis = plot.domainAxis as NumberAxis
         domain.setRange(lowerRange - 20, upperRange + 20)
         domain.isVerticalTickLabels = true
-        val range: NumberAxis = plot.getRangeAxis() as NumberAxis
+        val range: NumberAxis = plot.rangeAxis as NumberAxis
         range.setRange(lowerRange - 20, upperRange + 20)
     }
 
@@ -166,10 +183,10 @@ public open class Graph @JvmOverloads constructor(
      * @param rightBound
      */
     public fun resizeGraph(lowerBound: Double, upperBound: Double, leftBound: Double, rightBound: Double) {
-        val domain: NumberAxis = plot.getDomainAxis() as NumberAxis
+        val domain: NumberAxis = plot.domainAxis as NumberAxis
         domain.setRange(leftBound, rightBound)
-        domain.setVerticalTickLabels(true)
-        val range: NumberAxis = plot.getRangeAxis() as NumberAxis
+        domain.isVerticalTickLabels = true
+        val range: NumberAxis = plot.rangeAxis as NumberAxis
         range.setRange(lowerBound, upperBound)
     }
 
@@ -179,32 +196,32 @@ public open class Graph @JvmOverloads constructor(
      * @param scale
      */
     public fun scaleGraphToScale(scale: Double, centerX: Double, centerY: Double) {
-        val width: Double = getWidth().toDouble()
-        val height: Double = getHeight().toDouble()
+        val width: Double = width.toDouble()
+        val height: Double = height.toDouble()
         val upperBound = centerY + height * scale / 2
         val lowerBound = centerY - height * scale / 2
         val leftBound = centerX - width * scale / 2
         val rightBound = centerX + width * scale / 2
-        val domain: NumberAxis = plot.getDomainAxis() as NumberAxis
+        val domain: NumberAxis = plot.domainAxis as NumberAxis
         domain.setRange(leftBound, rightBound)
-        domain.setVerticalTickLabels(true)
-        val range: NumberAxis = plot.getRangeAxis() as NumberAxis
+        domain.isVerticalTickLabels = true
+        val range: NumberAxis = plot.rangeAxis as NumberAxis
         range.setRange(lowerBound, upperBound)
     }
 
     public fun setGraphTheme(theme: GraphTheme) {
-        chartPanel.setBackground(theme.frameBackgroundColor)
-        plot.setBackgroundPaint(theme.graphBackgroundColor)
-        plot.setDomainGridlinePaint(theme.gridColor)
-        plot.setRangeGridlinePaint(theme.gridColor)
-        chart.setBackgroundPaint(theme.frameBackgroundColor)
-        chart.getTitle().setPaint(theme.titleColor)
-        chart.getLegend().setItemPaint(theme.labelColor)
-        chart.getLegend().setBackgroundPaint(theme.frameBackgroundColor)
-        plot.getDomainAxis().setLabelPaint(theme.labelColor)
-        plot.getRangeAxis().setLabelPaint(theme.labelColor)
-        plot.getDomainAxis().setTickLabelPaint(theme.tickLabelColor)
-        plot.getRangeAxis().setTickLabelPaint(theme.tickLabelColor)
+        chartPanel.background = theme.frameBackgroundColor
+        plot.backgroundPaint = theme.graphBackgroundColor
+        plot.domainGridlinePaint = theme.gridColor
+        plot.rangeGridlinePaint = theme.gridColor
+        chart.backgroundPaint = theme.frameBackgroundColor
+        chart.title.paint = theme.titleColor
+        chart.legend.itemPaint = theme.labelColor
+        chart.legend.backgroundPaint = theme.frameBackgroundColor
+        plot.domainAxis.labelPaint = theme.labelColor
+        plot.rangeAxis.labelPaint = theme.labelColor
+        plot.domainAxis.tickLabelPaint = theme.tickLabelColor
+        plot.rangeAxis.tickLabelPaint = theme.tickLabelColor
     }
 
     init {
@@ -213,7 +230,7 @@ public open class Graph @JvmOverloads constructor(
         isVisible = true
     }
 
-    public companion object{
+    public companion object {
         public fun rectangle(centerTransform: Transform, width: Double, height: Double): Array<Vector2D> {
             val halfWidth = width / 2
             val halfHeight = height / 2
@@ -266,10 +283,9 @@ public open class Graph @JvmOverloads constructor(
             val positions: ArrayList<Vector2D> = ArrayList<Vector2D>()
             var t = 0.0
             while (t < 1) {
-                if(arrowWidth == 0.0){
+                if (arrowWidth == 0.0) {
                     positions.add(parametric.getVector(t))
-                }
-                else{
+                } else {
                     val arrow: Array<Vector2D> = arrow(parametric.getTransform(t), 0.0, arrowWidth)
                     for (p in arrow) {
                         positions.add(p)
@@ -280,7 +296,11 @@ public open class Graph @JvmOverloads constructor(
             return positions.toArray(arrayOfNulls<Vector2D>(0))
         }
 
-        public fun parametric(parametric: Parametric, parameterization: DoubleArray, arrowWidth: Double): Array<Vector2D> {
+        public fun parametric(
+            parametric: Parametric,
+            parameterization: DoubleArray,
+            arrowWidth: Double
+        ): Array<Vector2D> {
             val positions: ArrayList<Vector2D> = ArrayList<Vector2D>()
             for (i in parameterization.indices) {
                 val arrow: Array<Vector2D> = arrow(parametric.getTransform(parameterization[i]), 0.0, arrowWidth)
