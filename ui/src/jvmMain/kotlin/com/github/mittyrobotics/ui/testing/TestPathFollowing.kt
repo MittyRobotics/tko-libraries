@@ -7,8 +7,14 @@ import com.github.mittyrobotics.core.math.spline.Path
 import com.github.mittyrobotics.motion.profiles.PathMotionProfile
 import com.github.mittyrobotics.ui.graph.Graph
 
-public fun main(){
-    val path = Path.quinticHermitePath(arrayOf(Transform(), Transform(Vector2D(10.0, -5.0)), Transform(Vector2D(10.0, 5.0), Rotation(0.0))))
+public fun main() {
+    val path = Path.quinticHermitePath(
+        arrayOf(
+            Transform(),
+            Transform(Vector2D(10.0, -5.0)),
+            Transform(Vector2D(10.0, 5.0), Rotation(0.0))
+        )
+    )
     val graph = Graph()
     graph.plotParametric(path, "Path")
     val velocities = mutableListOf<Vector2D>()
@@ -18,17 +24,15 @@ public fun main(){
     val profile = PathMotionProfile(path, 1.0, 10.0, 2.0, 0.0, 0.0)
     val dt = 0.02
     var distance = 0.0
-    var currentVelocity = profile.startVelocity
-    for(i in 0 until 1000){
-        val t = i*dt
+    for (i in 0 until 1000) {
+        val t = i * dt
         val state = profile.next(dt)
         val velocity = state[0]
         val angularVelocity = state[1]
-        currentVelocity = velocity
-        distance += currentVelocity*dt
+        distance += velocity * dt
         velocities.add(Vector2D(t, velocity))
         angularVelocities.add(Vector2D(t, angularVelocity))
-        distancesRemaining.add(Vector2D(t, path.getGaussianQuadratureLength()-distance))
+        distancesRemaining.add(Vector2D(t, path.getGaussianQuadratureLength() - distance))
         curvatures.add(Vector2D(t, path.getCurvature(path.getParameterFromLength(distance))))
     }
 
