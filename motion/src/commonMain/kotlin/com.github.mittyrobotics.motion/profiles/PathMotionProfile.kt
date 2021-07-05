@@ -13,7 +13,7 @@ public class PathMotionProfile(
     public val maxAngularVelocity: Double = Double.POSITIVE_INFINITY,
     public val startVelocity: Double = 0.0,
     public val endVelocity: Double = 0.0,
-    public val minVelocity: Double = maxVelocity / 4.0,
+    public val minVelocity: Double = 0.0,
     public val maxDeceleration: Double = maxAcceleration
 ): GenerativeMotionProfile() {
     private var previousVelocity: Double = startVelocity
@@ -63,7 +63,7 @@ public class PathMotionProfile(
         previousVelocity = velocity
         traveledDistance += velocity*dt
 
-        return State(velocity)
+        return State(velocity, DifferentialDriveState.calculateAngular(velocity, 1.0/curvature))
     }
 
     private fun calculateSlowdownVelocity(curvature: Double): Double =

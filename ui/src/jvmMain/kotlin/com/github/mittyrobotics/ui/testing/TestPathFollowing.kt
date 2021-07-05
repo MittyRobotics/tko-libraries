@@ -12,23 +12,28 @@ public fun main(){
     val graph = Graph()
     graph.plotParametric(path, "Path")
     val velocities = mutableListOf<Vector2D>()
+    val angularVelocities = mutableListOf<Vector2D>()
     val distancesRemaining = mutableListOf<Vector2D>()
     val curvatures = mutableListOf<Vector2D>()
-    val profile = PathMotionProfile(path, 1.0, 10.0, 1.0, 0.0, 0.0)
+    val profile = PathMotionProfile(path, 1.0, 10.0, 2.0, 0.0, 0.0)
     val dt = 0.02
     var distance = 0.0
     var currentVelocity = profile.startVelocity
     for(i in 0 until 1000){
         val t = i*dt
-        val velocity = profile.next(dt)
+        val state = profile.next(dt)
+        val velocity = state[0]
+        val angularVelocity = state[1]
         currentVelocity = velocity
         distance += currentVelocity*dt
         velocities.add(Vector2D(t, velocity))
+        angularVelocities.add(Vector2D(t, angularVelocity))
         distancesRemaining.add(Vector2D(t, path.getGaussianQuadratureLength()-distance))
         curvatures.add(Vector2D(t, path.getCurvature(path.getParameterFromLength(distance))))
     }
 
-    graph.plot(velocities.toTypedArray(), "Velocity")
+    graph.plot(velocities.toTypedArray(), "Linear Velocity")
+    graph.plot(angularVelocities.toTypedArray(), "Angular Velocity")
     graph.plot(distancesRemaining.toTypedArray(), "Distance Remaining")
     graph.plot(curvatures.toTypedArray(), "Curvature")
 }
