@@ -1,5 +1,6 @@
 package com.github.mittyrobotics.core.math.geometry
 
+import kotlin.math.atan2
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -31,6 +32,14 @@ public data class Vector2D(var x: Double = 0.0, var y: Double = 0.0) {
      * @return the magnitude of this [Vector2D] represented as a vector.
      */
     public fun magnitude(): Double = sqrt(x.pow(2.0) + y.pow(2.0))
+
+    /**
+     * Calculates the angle from this {@link Vector2D} to other.
+     *
+     * @param other the {@link Vector2D} to get the angle to
+     * @return {@link Rotation} from this {@link Vector2D} to <code>other</code>
+     */
+    public fun angleTo(other: Vector2D): Rotation = Rotation(x-other.x, y-other.y)
 
     /**
      * Rotates this [Vector2D] by [Rotation] `rotation` around the origin (0,0) of a standard
