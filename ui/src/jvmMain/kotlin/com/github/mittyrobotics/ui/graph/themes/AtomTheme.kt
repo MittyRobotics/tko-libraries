@@ -21,36 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.mittyrobotics.ui.themes
+package com.github.mittyrobotics.ui.graph.themes
 
-import com.github.mittyrobotics.ui.themes.GraphTheme
 import java.awt.Color
-import kotlin.jvm.JvmStatic
-import com.github.mittyrobotics.ui.XYSeriesWithRenderer
-import com.github.mittyrobotics.ui.GraphUtil
-import kotlin.jvm.JvmOverloads
-import javax.swing.JFrame
-import org.jfree.chart.JFreeChart
-import org.jfree.chart.plot.XYPlot
-import org.jfree.chart.ChartPanel
-import org.jfree.data.xy.XYSeriesCollection
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
-import javax.swing.BorderFactory
-import org.jfree.chart.ChartFactory
-import org.jfree.chart.plot.PlotOrientation
-import org.jfree.chart.axis.NumberAxis
-import java.text.DecimalFormat
-import org.jfree.data.xy.XYSeries
-import java.awt.Shape
-import org.jfree.data.xy.XYDataItem
-import javax.swing.SwingUtilities
-import java.lang.Runnable
 
-public class DefaultDarkTheme : GraphTheme(
-    Color(64, 64, 64),
-    Color(0, 0, 0),
-    Color(71, 71, 71),
-    Color(158, 159, 157),
-    Color(158, 159, 157),
-    Color(158, 159, 157)
+public class AtomTheme : GraphTheme(
+    Color(33, 37, 43),
+    Color(96, 99, 104),
+    Color(40, 44, 52),
+    Color(171, 178, 191),
+    Color(171, 178, 191),
+    Color(171, 178, 191)
 )

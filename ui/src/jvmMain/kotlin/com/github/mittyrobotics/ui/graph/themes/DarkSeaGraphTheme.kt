@@ -21,36 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.mittyrobotics.ui.themes
+package com.github.mittyrobotics.ui.graph.themes
 
-import com.github.mittyrobotics.ui.themes.GraphTheme
 import java.awt.Color
-import kotlin.jvm.JvmStatic
-import com.github.mittyrobotics.ui.XYSeriesWithRenderer
-import com.github.mittyrobotics.ui.GraphUtil
-import kotlin.jvm.JvmOverloads
-import javax.swing.JFrame
-import org.jfree.chart.JFreeChart
-import org.jfree.chart.plot.XYPlot
-import org.jfree.chart.ChartPanel
-import org.jfree.data.xy.XYSeriesCollection
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
-import javax.swing.BorderFactory
-import org.jfree.chart.ChartFactory
-import org.jfree.chart.plot.PlotOrientation
-import org.jfree.chart.axis.NumberAxis
-import java.text.DecimalFormat
-import org.jfree.data.xy.XYSeries
-import java.awt.Shape
-import org.jfree.data.xy.XYDataItem
-import javax.swing.SwingUtilities
-import java.lang.Runnable
 
-public class TKOTheme : GraphTheme(
+public class DarkSeaGraphTheme : GraphTheme(
     Color(18, 23, 25),
     Color(0, 0, 0),
     Color(25, 27, 29),
-    Color(203, 181, 120),
-    Color(203, 181, 120),
-    Color(203, 181, 120)
+    Color(194, 194, 194),
+    Color(161, 161, 161),
+    Color(113, 113, 113)
 )
