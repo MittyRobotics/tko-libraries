@@ -26,6 +26,7 @@ package com.github.mittyrobotics.ui
 import com.github.mittyrobotics.core.math.linalg.Matrix
 import com.github.mittyrobotics.motion.models.LinearSystem
 import com.github.mittyrobotics.motion.models.step
+import com.github.mittyrobotics.ui.graph.Graph
 import kotlin.math.pow
 
 public fun main(){
@@ -40,4 +41,6 @@ public fun main(){
     val sys = LinearSystem(A, B, C, D)
 
     val sim = step(sys, 20.0)
+
+    Graph().plotSystemResponse(sim, "Step Response")
 }

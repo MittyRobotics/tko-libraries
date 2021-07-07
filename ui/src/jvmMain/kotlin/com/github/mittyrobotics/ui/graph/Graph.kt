@@ -26,6 +26,7 @@ package com.github.mittyrobotics.ui.graph
 import com.github.mittyrobotics.core.math.geometry.Rotation
 import com.github.mittyrobotics.core.math.geometry.Transform
 import com.github.mittyrobotics.core.math.geometry.Vector2D
+import com.github.mittyrobotics.core.math.linalg.Matrix
 import com.github.mittyrobotics.core.math.spline.Parametric
 import com.github.mittyrobotics.ui.graph.themes.DefaultDarkTheme
 import com.github.mittyrobotics.ui.graph.themes.GraphTheme
@@ -43,6 +44,7 @@ import java.awt.Color
 import java.text.DecimalFormat
 import javax.swing.BorderFactory
 import javax.swing.JFrame
+import javax.swing.SwingUtilities
 import kotlin.math.PI
 
 public open class Graph @JvmOverloads constructor(
@@ -104,6 +106,38 @@ public open class Graph @JvmOverloads constructor(
         update()
     }
 
+    public fun plotSystemResponse(
+        data: Array<Triple<Matrix, Matrix, Double>>,
+        name: String,
+        lines: Boolean = true,
+        points: Boolean = false,
+        color: Color? = null
+    ) {
+        for (i in data.first().first.get2DData().indices) {
+            dataList.add(
+                GraphData(
+                    Array(data.size) { Vector2D(data[it].third, data[it].first.get2DData()[i]) },
+                    "$name State $i",
+                    lines,
+                    points,
+                    color
+                )
+            )
+        }
+        for (i in data.first().second.get2DData().indices) {
+            dataList.add(
+                GraphData(
+                    Array(data.size) { Vector2D(data[it].third, data[it].second.get2DData()[i]) },
+                    "$name Input $i",
+                    lines,
+                    points,
+                    color
+                )
+            )
+        }
+        update()
+    }
+
     public fun plotParametric(
         parametric: Parametric,
         name: String,
@@ -118,16 +152,18 @@ public open class Graph @JvmOverloads constructor(
     }
 
     public fun update() {
-        defaultDataset.removeAllSeries()
-        for (i in dataList.indices) {
-            defaultDataset.addSeries(
-                XYSeries(
-                    dataList[i].name,
-                    false
-                ).also { series -> dataList[i].data.forEach { series.add(XYDataItem(it.x, it.y)) } })
-            defaultRenderer.setSeriesPaint(i, dataList[i].color)
-            defaultRenderer.setSeriesLinesVisible(i, dataList[i].lines)
-            defaultRenderer.setSeriesShapesVisible(i, dataList[i].points)
+        SwingUtilities.invokeLater {
+            defaultDataset.removeAllSeries()
+            for (i in dataList.indices) {
+                defaultDataset.addSeries(
+                    XYSeries(
+                        dataList[i].name,
+                        false
+                    ).also { series -> dataList[i].data.forEach { series.add(XYDataItem(it.x, it.y)) } })
+                defaultRenderer.setSeriesPaint(i, dataList[i].color)
+                defaultRenderer.setSeriesLinesVisible(i, dataList[i].lines)
+                defaultRenderer.setSeriesShapesVisible(i, dataList[i].points)
+            }
         }
     }
 

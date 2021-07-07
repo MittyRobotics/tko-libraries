@@ -6,13 +6,13 @@ import com.github.mittyrobotics.core.math.geometry.Vector2D
 import com.github.mittyrobotics.core.math.spline.Path
 import com.github.mittyrobotics.motion.profiles.PathMotionProfile
 import com.github.mittyrobotics.ui.graph.Graph
+import kotlin.math.PI
 
 public fun main() {
     val path = Path.quinticHermitePath(
         arrayOf(
-            Transform(),
-            Transform(Vector2D(10.0, -5.0)),
-            Transform(Vector2D(10.0, 5.0), Rotation(0.0))
+            Transform(Vector2D(), Rotation(PI/2.0)),
+            Transform(Vector2D(10.0, -5.0), Rotation(PI/2.0))
         )
     )
     val graph = Graph()
@@ -39,5 +39,5 @@ public fun main() {
     graph.plot(velocities.toTypedArray(), "Linear Velocity")
     graph.plot(angularVelocities.toTypedArray(), "Angular Velocity")
     graph.plot(distancesRemaining.toTypedArray(), "Distance Remaining")
-    graph.plot(curvatures.toTypedArray(), "Curvature")
+//    graph.plot(curvatures.toTypedArray(), "Curvature")
 }
