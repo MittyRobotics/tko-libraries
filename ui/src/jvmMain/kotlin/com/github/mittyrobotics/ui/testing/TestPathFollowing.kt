@@ -4,6 +4,7 @@ import com.github.mittyrobotics.core.math.geometry.Rotation
 import com.github.mittyrobotics.core.math.geometry.Transform
 import com.github.mittyrobotics.core.math.geometry.Vector2D
 import com.github.mittyrobotics.core.math.spline.Path
+import com.github.mittyrobotics.core.math.units.degrees
 import com.github.mittyrobotics.motion.profiles.PathMotionProfile
 import com.github.mittyrobotics.ui.graph.Graph
 import kotlin.math.PI
@@ -11,8 +12,8 @@ import kotlin.math.PI
 public fun main() {
     val path = Path.quinticHermitePath(
         arrayOf(
-            Transform(Vector2D(), Rotation(PI/2.0)),
-            Transform(Vector2D(10.0, -5.0), Rotation(PI/2.0))
+            Transform(Vector2D(), Rotation(90.0.degrees())),
+            Transform(Vector2D(10.0, -5.0), Rotation(90.0.degrees()))
         )
     )
     val graph = Graph()
