@@ -12,8 +12,32 @@ import com.github.mittyrobotics.core.math.linalg.Matrix.Companion.zeros
  * @param x0 initial state vector
  * @return array of triples in the form of Triple(state, input, time]) representing the response
  */
-public fun step(sys: LinearSystem, time: Double, dt: Double = 0.01, stepMagnitude: Double = 1.0, x0: Matrix = zeros(sys.A.rows, 1)): Array<Triple<Matrix, Matrix, Double>>{
+public fun step(
+    sys: LinearSystem,
+    time: Double,
+    dt: Double = 0.01,
+    stepMagnitude: Double = 1.0,
+    x0: Matrix = zeros(sys.A.rows, 1)
+): SystemResponse {
     return sim(sys, arrayOf(Pair(fill(sys.A.rows, 1, stepMagnitude), 0.0)), time, dt, x0)
+}
+
+/**
+ * Simulates the step response for a system for an amount of time
+ * @param sys linear system
+ * @param time simulation time
+ * @param stepMagnitude magnitude of step input
+ * @param x0 initial state vector
+ * @return array of triples in the form of Triple(state, input, time]) representing the response
+ */
+public fun sim(
+    sys: LinearSystem,
+    input: Matrix,
+    time: Double = 10.0,
+    dt: Double = 0.01,
+    x0: Matrix = zeros(sys.A.rows, 1)
+): SystemResponse {
+    return sim(sys, arrayOf(Pair(input, 0.0)), time, dt, x0)
 }
 
 /**
@@ -23,18 +47,26 @@ public fun step(sys: LinearSystem, time: Double, dt: Double = 0.01, stepMagnitud
  * @param x0 initial state vector
  * @return array of triples in the form of Triple(state, input, time]) representing the response
  */
-public fun sim(sys: LinearSystem, UT: Array<Pair<Matrix, Double>>, x0: Matrix = zeros(sys.A.rows, 1)): Array<Triple<Matrix, Matrix, Double>>{
-    val arr = mutableListOf<Triple<Matrix, Matrix, Double>>()
+public fun sim(
+    sys: LinearSystem,
+    UT: Array<Pair<Matrix, Double>>,
+    x0: Matrix = zeros(sys.A.rows, 1)
+): SystemResponse {
+    val outputs = mutableListOf<Matrix>()
+    val inputs = mutableListOf<Matrix>()
+    val times = mutableListOf<Double>()
 
     var x = x0
-    for(i in 1 until UT.size){
+    for (i in 1 until UT.size) {
         val U = UT[i].first
         val T = UT[i].second
-        val dt = T-UT[i-1].second
+        val dt = T - UT[i - 1].second
         x = simNext(sys, x, U, dt)
-        arr.add(Triple(x, U, T))
+        outputs.add(x)
+        inputs.add(U)
+        times.add(T)
     }
-    return arr.toTypedArray()
+    return SystemResponse(outputs.toTypedArray(), inputs.toTypedArray(), times.toTypedArray())
 }
 
 /**
@@ -46,13 +78,19 @@ public fun sim(sys: LinearSystem, UT: Array<Pair<Matrix, Double>>, x0: Matrix = 
  * @param x0 initial state vector
  * @return array of triples in the form of Triple(state, input, time]) representing the response
  */
-public fun sim(sys: LinearSystem, UT: Array<Pair<Matrix, Double>>, time: Double, dt: Double, x0: Matrix = zeros(sys.A.rows, 1)): Array<Triple<Matrix, Matrix, Double>>{
+public fun sim(
+    sys: LinearSystem,
+    UT: Array<Pair<Matrix, Double>>,
+    time: Double,
+    dt: Double,
+    x0: Matrix = zeros(sys.A.rows, 1)
+): SystemResponse {
     val inputs = mutableListOf<Pair<Matrix, Double>>()
     var u = zeros(sys.B.cols, 1)
     var uti = 0
-    for(i in 0 until (time/dt).toInt()){
+    for (i in 0 until (time / dt).toInt()) {
         val t = i * dt
-        if(uti < UT.size && t >= UT[uti].second){
+        if (uti < UT.size && t >= UT[uti].second) {
             u = UT[uti].first
             uti++
         }
@@ -80,13 +118,37 @@ public fun sim(sys: LinearSystem, UT: Array<Pair<Matrix, Double>>, time: Double,
  * @param dt delta time
  * @return x state vector
  */
-public fun simNext(sys: LinearSystem, x0: Matrix, u: Matrix, dt: Double): Matrix{
+public fun simNext(sys: LinearSystem, x0: Matrix, u: Matrix, dt: Double): Matrix {
     val inputs = sys.B.cols
     val states = sys.A.rows
 
-    val M = expm(vstack(hstack(sys.A * dt, sys.B * dt), zeros(inputs, states+inputs)))
+    val M = expm(vstack(hstack(sys.A * dt, sys.B * dt), zeros(inputs, states + inputs)))
     val H = vstack(x0, u)
-    val K = M*H
+    val K = M * H
 
     return K.subMatrix(endRow = states)
 }
+
+public fun integrate(response: SystemResponse): SystemResponse {
+    val outputs = mutableListOf<Matrix>()
+    outputs.add(zeros(response.inputs.first().rows, response.inputs.first().cols))
+    var lastTime = 0.0
+    for (i in 1 until response.inputs.size) {
+        val output = response.outputs[i]
+        val time = response.times[i]
+        val dt = time - lastTime
+        lastTime = time
+        outputs.add(
+                Matrix.column(DoubleArray(output.get2DData().size) {
+                    outputs.last().get2DData()[it] + output.get2DData()[it] * dt
+                })
+        )
+    }
+    return SystemResponse(outputs.toTypedArray(), response.inputs, response.times)
+}
+
+public data class SystemResponse(
+    public val outputs: Array<Matrix>,
+    public val inputs: Array<Matrix>,
+    public val times: Array<Double>
+)

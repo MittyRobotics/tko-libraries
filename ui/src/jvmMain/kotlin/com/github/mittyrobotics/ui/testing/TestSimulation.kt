@@ -23,13 +23,12 @@
  */
 package com.github.mittyrobotics.ui
 
+import com.github.mittyrobotics.core.math.geometry.Vector2D
 import com.github.mittyrobotics.core.math.linalg.Matrix
 import com.github.mittyrobotics.core.math.units.inches
 import com.github.mittyrobotics.core.math.units.pounds
-import com.github.mittyrobotics.motion.models.LinearSystem
-import com.github.mittyrobotics.motion.models.elevator
+import com.github.mittyrobotics.motion.models.*
 import com.github.mittyrobotics.motion.models.motors.DCMotor
-import com.github.mittyrobotics.motion.models.step
 import com.github.mittyrobotics.ui.graph.Graph
 import kotlin.math.pow
 
@@ -44,8 +43,10 @@ public fun main(){
     val D = Matrix(arrayOf(doubleArrayOf(0.0)))
     val sys = LinearSystem(A, B, C, D)
     val elevator = elevator(DCMotor.neo(2), 20.0.pounds(), 10.0, 4.0.inches())
+    val drivetrain = drivetrain(DCMotor.falcon500(2), 40.0.pounds(), 12.0, 1.268, 4.0.inches(), 20.0.inches())
 
-    val sim = step(elevator, 20.0, stepMagnitude = 4.0)
+    val sim = sim(drivetrain, Matrix.column(doubleArrayOf(4.0, 5.0)), 20.0)
 
-    Graph().plotSystemResponse(sim, "Step Response")
+
+    Graph().plot(sim, "Step Response")
 }

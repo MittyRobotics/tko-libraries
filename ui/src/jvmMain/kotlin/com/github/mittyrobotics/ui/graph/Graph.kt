@@ -28,6 +28,7 @@ import com.github.mittyrobotics.core.math.geometry.Transform
 import com.github.mittyrobotics.core.math.geometry.Vector2D
 import com.github.mittyrobotics.core.math.linalg.Matrix
 import com.github.mittyrobotics.core.math.spline.Parametric
+import com.github.mittyrobotics.motion.models.SystemResponse
 import com.github.mittyrobotics.ui.graph.themes.DefaultDarkTheme
 import com.github.mittyrobotics.ui.graph.themes.GraphTheme
 import org.jfree.chart.ChartFactory
@@ -106,17 +107,17 @@ public open class Graph @JvmOverloads constructor(
         update()
     }
 
-    public fun plotSystemResponse(
-        data: Array<Triple<Matrix, Matrix, Double>>,
+    public fun plot(
+        data: SystemResponse,
         name: String,
         lines: Boolean = true,
         points: Boolean = false,
         color: Color? = null
     ) {
-        for (i in data.first().first.get2DData().indices) {
+        for (i in data.inputs.first().get2DData().indices) {
             dataList.add(
                 GraphData(
-                    Array(data.size) { Vector2D(data[it].third, data[it].first.get2DData()[i]) },
+                    Array(data.inputs.size) { Vector2D(data.times[it], data.inputs[it].get2DData()[i]) },
                     "$name State $i",
                     lines,
                     points,
@@ -124,10 +125,10 @@ public open class Graph @JvmOverloads constructor(
                 )
             )
         }
-        for (i in data.first().second.get2DData().indices) {
+        for (i in data.outputs.first().get2DData().indices) {
             dataList.add(
                 GraphData(
-                    Array(data.size) { Vector2D(data[it].third, data[it].second.get2DData()[i]) },
+                    Array(data.outputs.size) { Vector2D(data.times[it], data.outputs[it].get2DData()[i]) },
                     "$name Input $i",
                     lines,
                     points,
