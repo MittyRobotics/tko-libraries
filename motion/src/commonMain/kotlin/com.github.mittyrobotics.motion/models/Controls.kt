@@ -6,14 +6,14 @@ import com.github.mittyrobotics.core.math.linalg.Matrix.Companion.zeros
 
 /**
  * Simulates the step response for a system for an amount of time
- * @param sys linear system
+ * @param sys system model
  * @param time simulation time
  * @param stepMagnitude magnitude of step input
  * @param x0 initial state vector
  * @return array of triples in the form of Triple(state, input, time]) representing the response
  */
 public fun step(
-    sys: LinearSystem,
+    sys: SystemModel,
     time: Double,
     dt: Double = 0.01,
     stepMagnitude: Double = 1.0,
@@ -24,14 +24,14 @@ public fun step(
 
 /**
  * Simulates the step response for a system for an amount of time
- * @param sys linear system
+ * @param sys system model
  * @param time simulation time
  * @param stepMagnitude magnitude of step input
  * @param x0 initial state vector
  * @return array of triples in the form of Triple(state, input, time]) representing the response
  */
 public fun sim(
-    sys: LinearSystem,
+    sys: SystemModel,
     input: Matrix,
     time: Double = 10.0,
     dt: Double = 0.01,
@@ -42,13 +42,13 @@ public fun sim(
 
 /**
  * Simulates the system response for a given array of control inputs and timestamps
- * @param sys linear system
+ * @param sys system model
  * @param UT array of control inputs and timestamps in the form of a Pair(input, time)
  * @param x0 initial state vector
  * @return array of triples in the form of Triple(state, input, time]) representing the response
  */
 public fun sim(
-    sys: LinearSystem,
+    sys: SystemModel,
     UT: Array<Pair<Matrix, Double>>,
     x0: Matrix = zeros(sys.A.rows, 1)
 ): SystemResponse {
@@ -71,7 +71,7 @@ public fun sim(
 
 /**
  * Simulates the system response for a given array of control inputs and timestamps
- * @param sys linear system
+ * @param sys system model
  * @param UT array of control inputs and timestamps in the form of a Pair(input, time)
  * @param time total simulation time
  * @param dt change in time per step
@@ -79,7 +79,7 @@ public fun sim(
  * @return array of triples in the form of Triple(state, input, time]) representing the response
  */
 public fun sim(
-    sys: LinearSystem,
+    sys: SystemModel,
     UT: Array<Pair<Matrix, Double>>,
     time: Double,
     dt: Double,
@@ -112,39 +112,23 @@ public fun sim(
  *  [ u(dt) ] = exp [  0     0    ] [ u0 ]
  *
  *
- * @param sys linear system
- * @param x0 initial position
+ * @param sys system model
+ * @param x0 initial state vector
  * @param u control input
  * @param dt delta time
  * @return x state vector
  */
-public fun simNext(sys: LinearSystem, x0: Matrix, u: Matrix, dt: Double): Matrix {
+public fun simNext(sys: SystemModel, x0: Matrix, u: Matrix, dt: Double): Matrix {
     val inputs = sys.B.cols
     val states = sys.A.rows
 
-    val M = expm(vstack(hstack(sys.A * dt, sys.B * dt), zeros(inputs, states + inputs)))
+    val y = sys.C*x0 + sys.D*u
+
+    val M = expm(vstack(hstack(sys.A_(mapOf("y" to y)) * dt, sys.B_(mapOf("y" to y)) * dt), zeros(inputs, states + inputs)))
     val H = vstack(x0, u)
     val K = M * H
 
     return K.subMatrix(endRow = states)
-}
-
-public fun integrate(response: SystemResponse): SystemResponse {
-    val outputs = mutableListOf<Matrix>()
-    outputs.add(zeros(response.inputs.first().rows, response.inputs.first().cols))
-    var lastTime = 0.0
-    for (i in 1 until response.inputs.size) {
-        val output = response.outputs[i]
-        val time = response.times[i]
-        val dt = time - lastTime
-        lastTime = time
-        outputs.add(
-                Matrix.column(DoubleArray(output.get2DData().size) {
-                    outputs.last().get2DData()[it] + output.get2DData()[it] * dt
-                })
-        )
-    }
-    return SystemResponse(outputs.toTypedArray(), response.inputs, response.times)
 }
 
 public data class SystemResponse(

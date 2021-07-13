@@ -118,7 +118,7 @@ public open class Graph @JvmOverloads constructor(
             dataList.add(
                 GraphData(
                     Array(data.inputs.size) { Vector2D(data.times[it], data.inputs[it].get2DData()[i]) },
-                    "$name State $i",
+                    "$name Input $i",
                     lines,
                     points,
                     color
@@ -129,7 +129,7 @@ public open class Graph @JvmOverloads constructor(
             dataList.add(
                 GraphData(
                     Array(data.outputs.size) { Vector2D(data.times[it], data.outputs[it].get2DData()[i]) },
-                    "$name Input $i",
+                    "$name State $i",
                     lines,
                     points,
                     color

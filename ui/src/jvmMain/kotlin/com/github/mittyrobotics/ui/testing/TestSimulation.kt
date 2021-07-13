@@ -30,7 +30,9 @@ import com.github.mittyrobotics.core.math.units.pounds
 import com.github.mittyrobotics.motion.models.*
 import com.github.mittyrobotics.motion.models.motors.DCMotor
 import com.github.mittyrobotics.ui.graph.Graph
+import kotlin.math.PI
 import kotlin.math.pow
+import kotlin.math.sin
 
 public fun main(){
     val Kp = 2.0
@@ -41,12 +43,13 @@ public fun main(){
     val B = Matrix(arrayOf(doubleArrayOf(0.0), doubleArrayOf(Kp/tau.pow(2.0))))
     val C = Matrix(arrayOf(doubleArrayOf(1.0, 0.0)))
     val D = Matrix(arrayOf(doubleArrayOf(0.0)))
-    val sys = LinearSystem(A, B, C, D)
+    val sys = SystemModel(A, B, C, D)
     val elevator = elevator(DCMotor.neo(2), 20.0.pounds(), 10.0, 4.0.inches())
     val drivetrain = drivetrain(DCMotor.falcon500(2), 40.0.pounds(), 12.0, 1.268, 4.0.inches(), 20.0.inches())
 
-    val sim = sim(drivetrain, Matrix.column(doubleArrayOf(4.0, 5.0)), 20.0)
-
+    val sim = sim(drivetrain, Matrix.column(doubleArrayOf(2.0, 2.0)), 20.0)
+    val robotPos = Array(sim.outputs.size){Vector2D( sim.outputs[it].get2DData(0), sim.outputs[it].get2DData(1))}
 
     Graph().plot(sim, "Step Response")
+    Graph().also { it.plot(robotPos, "Robot Pos"); it.scaleGraphToScale(.11, 0.0, 0.0)}
 }

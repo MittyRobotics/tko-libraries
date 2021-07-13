@@ -28,6 +28,10 @@ public open class Matrix(data: Array<DoubleArray>) {
         return array
     }
 
+    public fun get2DData(i: Int, rowMajor: Boolean = true): Double{
+        return get2DData(rowMajor)[i]
+    }
+
     public operator fun get(index: Int): DoubleArray = data[index]
 
     public operator fun set(index: Int, value: DoubleArray) {
@@ -109,6 +113,7 @@ public open class Matrix(data: Array<DoubleArray>) {
         public fun zeros(rows: Int, cols: Int): Matrix = fill(rows, cols, 0.0)
         public fun fill(rows: Int, cols: Int, value: Double): Matrix =
             Matrix(Array(rows) { DoubleArray(cols) { value } })
+        public fun empty(): Matrix = fill(0, 0, 0.0)
 
         public fun identity(n: Int): Matrix = Matrix(Array(n) { row ->
             DoubleArray(n) { col ->
