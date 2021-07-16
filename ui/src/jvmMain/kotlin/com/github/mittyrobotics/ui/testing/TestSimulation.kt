@@ -23,7 +23,9 @@
  */
 package com.github.mittyrobotics.ui
 
+import com.github.mittyrobotics.core.math.geometry.Transform
 import com.github.mittyrobotics.core.math.geometry.Vector2D
+import com.github.mittyrobotics.core.math.kinematics.DifferentialDriveState
 import com.github.mittyrobotics.core.math.linalg.Matrix
 import com.github.mittyrobotics.core.math.units.inches
 import com.github.mittyrobotics.core.math.units.pounds
@@ -47,9 +49,10 @@ public fun main(){
     val elevator = elevator(DCMotor.neo(2), 20.0.pounds(), 10.0, 4.0.inches())
     val drivetrain = drivetrain(DCMotor.falcon500(2), 40.0.pounds(), 12.0, 1.268, 4.0.inches(), 20.0.inches())
 
-    val sim = sim(drivetrain, Matrix.column(doubleArrayOf(2.0, 2.0)), 20.0)
+    val sim = sim(drivetrain, Matrix.column(doubleArrayOf(4.0, 2.0)), 20.0)
     val robotPos = Array(sim.outputs.size){Vector2D( sim.outputs[it].get2DData(0), sim.outputs[it].get2DData(1))}
 
+
     Graph().plot(sim, "Step Response")
-    Graph().also { it.plot(robotPos, "Robot Pos"); it.scaleGraphToScale(.11, 0.0, 0.0)}
+    Graph().also { it.plot(robotPos, "Robot Pos"); it.scaleGraphToScale(.11, 0.0, 0.0);}
 }

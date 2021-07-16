@@ -45,7 +45,11 @@ public data class Rotation(var radians: Double = 0.0) {
 
     public operator fun div(other: Rotation): Rotation = Rotation(radians / other.radians)
 
+    public operator fun div(value: Double): Rotation = Rotation(radians/value)
+
     public operator fun times(other: Rotation): Rotation = Rotation(radians * other.radians)
+
+    public operator fun times(value: Double): Rotation = Rotation(radians*value)
 
     public operator fun plusAssign(other: Rotation) {
         radians += other.radians
@@ -64,4 +68,5 @@ public data class Rotation(var radians: Double = 0.0) {
     }
 
     override fun toString(): String = ("Rotation($radians)")
+
 }
