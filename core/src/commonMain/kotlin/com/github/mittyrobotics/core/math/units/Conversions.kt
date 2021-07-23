@@ -17,6 +17,6 @@ import kotlin.math.PI
 
 public fun Double.inches():Double = this * 254e-4
 public fun Double.pounds():Double = this / 2.205
-public fun Double.degrees():Double = this*PI/180.0
+public fun Double.degrees():Double = this*PI / 180.0
 public fun Vector2D.inches():Vector2D = Vector2D(this.x.inches(), this.y.inches())
 public fun Rotation.degrees(): Rotation = Rotation(this.radians.degrees())

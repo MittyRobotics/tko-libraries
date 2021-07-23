@@ -1,5 +1,7 @@
 package com.github.mittyrobotics.core.math.kinematics
 
+import com.github.mittyrobotics.core.math.geometry.Rotation
+import com.github.mittyrobotics.core.math.geometry.Vector2D
 import kotlin.math.*
 
 public data class DifferentialDriveState(
@@ -9,6 +11,11 @@ public data class DifferentialDriveState(
     public val right: Double,
     public val L: Double
 ) {
+
+    public fun calculateVector(rotation: Rotation): Vector2D{
+        val avg = (left+right)/2.0
+        return Vector2D(avg*rotation.cos(), avg*rotation.sin())
+    }
 
     public companion object {
         public fun fromLinearAndAngular(linear: Double, angular: Double, L: Double): DifferentialDriveState {
@@ -21,7 +28,6 @@ public data class DifferentialDriveState(
                 val right = angular * (radius + L / 2)
                 return DifferentialDriveState(linear, angular, left, right, L)
             }
-
         }
 
         public fun fromLinearAndRadius(linear: Double, radius: Double, L: Double): DifferentialDriveState =
@@ -37,7 +43,7 @@ public data class DifferentialDriveState(
             fromAngularAndRadius(angular, 1.0/curvature,  L)
 
         public fun fromWheels(left: Double, right: Double, L: Double): DifferentialDriveState =
-            fromLinearAndAngular((left + right) / 2.0, (2 * (right - left)) / L, L)
+            DifferentialDriveState((left + right) / 2.0, (2 * (right - left)) / L, left, right, L)
 
         public fun calculateLinear(angular: Double, radius: Double): Double = radius*angular
 

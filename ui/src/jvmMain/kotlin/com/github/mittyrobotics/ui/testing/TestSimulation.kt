@@ -23,6 +23,7 @@
  */
 package com.github.mittyrobotics.ui
 
+import com.github.mittyrobotics.core.math.geometry.Rotation
 import com.github.mittyrobotics.core.math.geometry.Transform
 import com.github.mittyrobotics.core.math.geometry.Vector2D
 import com.github.mittyrobotics.core.math.kinematics.DifferentialDriveState
@@ -51,7 +52,6 @@ public fun main(){
 
     val sim = sim(drivetrain, Matrix.column(doubleArrayOf(4.0, 2.0)), 20.0)
     val robotPos = Array(sim.outputs.size){Vector2D( sim.outputs[it].get2DData(0), sim.outputs[it].get2DData(1))}
-
 
     Graph().plot(sim, "Step Response")
     Graph().also { it.plot(robotPos, "Robot Pos"); it.scaleGraphToScale(.11, 0.0, 0.0);}
