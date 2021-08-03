@@ -60,9 +60,9 @@ public fun drivetrain(
     val C1 = -G.pow(2.0) * motor.kt / (motor.kv * motor.resistance * r.pow(2.0))
     val C2 = G * motor.kt / (motor.resistance * r)
 
-    fun Map<String, Matrix>.theta(): Double = (get("y") ?: Matrix.zeros(1, 3)).get2DData(0)
-    fun Map<String, Matrix>.vl(): Double = (get("y") ?: Matrix.zeros(1, 3)).get2DData(1)
-    fun Map<String, Matrix>.vr(): Double = (get("y") ?: Matrix.zeros(1, 3)).get2DData(2)
+    fun Map<String, Matrix>.theta(): Double = get("y")?.get2DData(0) ?: 0.0
+    fun Map<String, Matrix>.vl(): Double = get("y")?.get2DData(1) ?: 0.0
+    fun Map<String, Matrix>.vr(): Double = get("y")?.get2DData(2) ?: 0.0
 
     val v: (Map<String, Matrix>) -> Double = { (it.vl() + it.vr()) / 2.0 }
 

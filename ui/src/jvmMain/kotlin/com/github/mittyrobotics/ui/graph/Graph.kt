@@ -26,7 +26,6 @@ package com.github.mittyrobotics.ui.graph
 import com.github.mittyrobotics.core.math.geometry.Rotation
 import com.github.mittyrobotics.core.math.geometry.Transform
 import com.github.mittyrobotics.core.math.geometry.Vector2D
-import com.github.mittyrobotics.core.math.linalg.Matrix
 import com.github.mittyrobotics.core.math.spline.Parametric
 import com.github.mittyrobotics.motion.models.SystemResponse
 import com.github.mittyrobotics.ui.graph.themes.DefaultDarkTheme
@@ -114,10 +113,10 @@ public open class Graph @JvmOverloads constructor(
         points: Boolean = false,
         color: Color? = null
     ) {
-        for (i in data.inputs.first().get2DData().indices) {
+        for (i in data.u.first().get2DData().indices) {
             dataList.add(
                 GraphData(
-                    Array(data.inputs.size) { Vector2D(data.times[it], data.inputs[it].get2DData()[i]) },
+                    Array(data.u.size) { Vector2D(data.t[it], data.u[it].get2DData()[i]) },
                     "$name Input $i",
                     lines,
                     points,
@@ -125,10 +124,10 @@ public open class Graph @JvmOverloads constructor(
                 )
             )
         }
-        for (i in data.outputs.first().get2DData().indices) {
+        for (i in data.x.first().get2DData().indices) {
             dataList.add(
                 GraphData(
-                    Array(data.outputs.size) { Vector2D(data.times[it], data.outputs[it].get2DData()[i]) },
+                    Array(data.x.size) { Vector2D(data.t[it], data.x[it].get2DData()[i]) },
                     "$name State $i",
                     lines,
                     points,

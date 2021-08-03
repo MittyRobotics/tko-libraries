@@ -1,12 +1,21 @@
 package com.github.mittyrobotics.core.math.geometry
 
 public data class Transform(val vector: Vector2D = Vector2D(), val rotation: Rotation = Rotation()) {
-    val x: Double
+    var x: Double
         get() = vector.x
-    val y: Double
+        set(value){
+            vector.x = value
+        }
+    var y: Double
         get() = vector.y
-    val radians: Double
+        set(value){
+            vector.y = value
+        }
+    var radians: Double
         get() = rotation.radians
+        set(value){
+            rotation.radians = value
+        }
 
     public operator fun plus(other: Transform): Transform = Transform(vector + other.vector, rotation + other.rotation)
     public operator fun minus(other: Transform): Transform = Transform(vector - other.vector, rotation - other.rotation)

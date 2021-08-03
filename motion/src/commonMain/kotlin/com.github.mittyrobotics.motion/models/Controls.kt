@@ -1,8 +1,11 @@
 package com.github.mittyrobotics.motion.models
 
+import com.github.mittyrobotics.core.math.geometry.Rotation
+import com.github.mittyrobotics.core.math.kinematics.DifferentialDriveState
 import com.github.mittyrobotics.core.math.linalg.*
 import com.github.mittyrobotics.core.math.linalg.Matrix.Companion.fill
 import com.github.mittyrobotics.core.math.linalg.Matrix.Companion.zeros
+import com.github.mittyrobotics.core.math.units.inches
 
 /**
  * Simulates the step response for a system for an amount of time
@@ -52,21 +55,25 @@ public fun sim(
     UT: Array<Pair<Matrix, Double>>,
     x0: Matrix = zeros(sys.A.rows, 1)
 ): SystemResponse {
-    val outputs = mutableListOf<Matrix>()
-    val inputs = mutableListOf<Matrix>()
-    val times = mutableListOf<Double>()
+    val xs = mutableListOf<Matrix>()
+    val ys = mutableListOf<Matrix>()
+    val us = mutableListOf<Matrix>()
+    val ts = mutableListOf<Double>()
 
     var x = x0
     for (i in 1 until UT.size) {
         val U = UT[i].first
         val T = UT[i].second
         val dt = T - UT[i - 1].second
-        x = simNext(sys, x, U, dt)
-        outputs.add(x)
-        inputs.add(U)
-        times.add(T)
+        val sim = simNext(sys, x, U, dt)
+        x = sim.first
+        val y = sim.second
+        xs.add(x)
+        ys.add(y)
+        us.add(U)
+        ts.add(T)
     }
-    return SystemResponse(outputs.toTypedArray(), inputs.toTypedArray(), times.toTypedArray())
+    return SystemResponse(xs.toTypedArray(), ys.toTypedArray(), us.toTypedArray(), ts.toTypedArray())
 }
 
 /**
@@ -116,9 +123,9 @@ public fun sim(
  * @param x0 initial state vector
  * @param u control input
  * @param dt delta time
- * @return x state vector
+ * @return Pair with state vector x and output vector y
  */
-public fun simNext(sys: SystemModel, x0: Matrix, u: Matrix, dt: Double): Matrix {
+public fun simNext(sys: SystemModel, x0: Matrix, u: Matrix, dt: Double): Pair<Matrix, Matrix> {
     val inputs = sys.B.cols
     val states = sys.A.rows
 
@@ -127,12 +134,16 @@ public fun simNext(sys: SystemModel, x0: Matrix, u: Matrix, dt: Double): Matrix 
     val M = expm(vstack(hstack(sys.A_(mapOf("y" to y)) * dt, sys.B_(mapOf("y" to y)) * dt), zeros(inputs, states + inputs)))
     val H = vstack(x0, u)
     val K = M * H
-
-    return K.subMatrix(endRow = states)
+    val xdot = sys.A_(mapOf("y" to y)) * x0 + sys.B_(mapOf("y" to y)) * u
+    val state = DifferentialDriveState.fromWheels(y.get2DData(1), y.get2DData(2), 20.0.inches()).calculateVector(Rotation(y.get2DData(0)))
+    println(xdot)
+    println("$state")
+    return Pair(K.subMatrix(endRow = states), y)
 }
 
 public data class SystemResponse(
-    public val outputs: Array<Matrix>,
-    public val inputs: Array<Matrix>,
-    public val times: Array<Double>
+    public val x: Array<Matrix>,
+    public val y: Array<Matrix>,
+    public val u: Array<Matrix>,
+    public val t: Array<Double>
 )
