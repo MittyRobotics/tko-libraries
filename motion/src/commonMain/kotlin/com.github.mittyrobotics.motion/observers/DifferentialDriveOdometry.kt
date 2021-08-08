@@ -24,7 +24,7 @@ public class DifferentialDriveOdometry(public val trackWidth: Double) {
     public fun update(leftVelocity: Double, rightVelocity: Double, gyro: Rotation, dt: Double): Transform =
         update(DifferentialDriveState.fromWheels(leftVelocity, rightVelocity, trackWidth), gyro, dt)
 
-    public fun calibrateGyro(currentAngle: Rotation, desiredAngle: Rotation){
+    public fun setRotation(currentAngle: Rotation, desiredAngle: Rotation){
         calibratedAngle.radians = (currentAngle-desiredAngle).radians
         transform.radians = desiredAngle.radians
     }
@@ -37,6 +37,6 @@ public class DifferentialDriveOdometry(public val trackWidth: Double) {
     public fun setTransform(transform: Transform, currentAngle: Rotation){
         this.transform.x = transform.x
         this.transform.y = transform.y
-        calibrateGyro(currentAngle, transform.rotation)
+        setRotation(currentAngle, transform.rotation)
     }
 }

@@ -6,7 +6,7 @@ import com.github.mittyrobotics.motion.State
 import kotlin.math.*
 
 
-public class PathMotionProfile(
+public class PathTrajectory(
     public val path: Parametric,
     public val maxAcceleration: Double,
     public val maxVelocity: Double,
@@ -26,21 +26,21 @@ public class PathMotionProfile(
      * @param dt delta time since last call to [next]
      */
     public override fun next(dt: Double): State {
-        //Calculate max velocity to end
         val distanceToEnd: Double = path.getGaussianQuadratureLength() - traveledDistance
-        val maxVelocityToEnd = calculateMaxVelocityFromDistance(endVelocity, distanceToEnd, maxDeceleration)
-        //Calculate initial trapezoidal velocity from safe velocity controller
-        var velocity: Double = min(min(previousVelocity + maxAcceleration * dt, maxVelocityToEnd), maxVelocity)
 
-        //Calculate preview distance to slowdown from current velocity to zero velocity
+        //Calculate trapezoidal velocity
+        val maxVelocityToEnd = calculateMaxVelocityFromDistance(endVelocity, distanceToEnd, maxDeceleration)
+        var velocity: Double = min(previousVelocity + maxAcceleration * dt, maxVelocityToEnd, maxVelocity)
+
+        //Calculate preview distance based on distance it will take to slow down robot from current velocity to 0
         val previewDistance = calculateDistanceToSlowdown(previousVelocity, 0.0, maxDeceleration)
-        //Get curvature at current point and preview point
+
+        //Get slowdown velocity at current point
         val curvature: Double = path.getCurvature(path.getParameterFromLength(traveledDistance))
-        val curvatureAtPreview: Double =
-            path.getCurvature(path.getParameterFromLength(traveledDistance + previewDistance))
-        //Calculate slowdown velocity at current point and preview point
         val slowdownVelocity = calculateSlowdownVelocity(curvature)
-        val slowdownVelocityAtPreview = calculateSlowdownVelocity(curvatureAtPreview)
+
+        //Preview slowdown velocity at future point
+        val slowdownVelocityAtPreview = previewVelocity(traveledDistance+previewDistance)
 
         //Remove old array values that we have traveled past
         previewedVelocities.removeAll { it.second <= traveledDistance }
@@ -60,11 +60,26 @@ public class PathMotionProfile(
             velocity = min(velocity, slowdownVelocity)
         }
 
-        previousVelocity = velocity
-        traveledDistance += velocity*dt
+        //store previous values
+        storePreviousValues(velocity, dt)
 
         return State(velocity, DifferentialDriveState.calculateAngular(velocity, 1.0/curvature))
     }
+
+    private fun min(vararg values: Double): Double{
+        var min = values[0]
+        for(value in values){
+            min = kotlin.math.min(value, min)
+        }
+        return min
+    }
+
+    private fun storePreviousValues(velocity: Double, dt: Double){
+        previousVelocity = velocity
+        traveledDistance += velocity*dt
+    }
+
+    private fun previewVelocity(distance: Double): Double = calculateSlowdownVelocity(path.getCurvature(path.getParameterFromLength(distance)))
 
     private fun calculateSlowdownVelocity(curvature: Double): Double =
         max(abs(DifferentialDriveState.calculateLinear(maxAngularVelocity, 1.0 / curvature)), minVelocity)

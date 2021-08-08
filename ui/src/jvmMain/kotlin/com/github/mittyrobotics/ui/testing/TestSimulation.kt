@@ -33,6 +33,7 @@ import com.github.mittyrobotics.motion.models.*
 import com.github.mittyrobotics.motion.models.motors.DCMotor
 import com.github.mittyrobotics.motion.observers.DifferentialDriveOdometry
 import com.github.mittyrobotics.ui.graph.Graph
+import com.github.mittyrobotics.ui.graph.themes.TKOTheme
 import kotlin.math.pow
 
 public fun main(){

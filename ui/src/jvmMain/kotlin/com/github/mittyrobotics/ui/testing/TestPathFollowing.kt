@@ -5,9 +5,8 @@ import com.github.mittyrobotics.core.math.geometry.Transform
 import com.github.mittyrobotics.core.math.geometry.Vector2D
 import com.github.mittyrobotics.core.math.spline.Path
 import com.github.mittyrobotics.core.math.units.degrees
-import com.github.mittyrobotics.motion.profiles.PathMotionProfile
+import com.github.mittyrobotics.motion.profiles.PathTrajectory
 import com.github.mittyrobotics.ui.graph.Graph
-import kotlin.math.PI
 
 public fun main() {
     val path = Path.quinticHermitePath(
@@ -22,12 +21,12 @@ public fun main() {
     val angularVelocities = mutableListOf<Vector2D>()
     val distancesRemaining = mutableListOf<Vector2D>()
     val curvatures = mutableListOf<Vector2D>()
-    val profile = PathMotionProfile(path, 1.0, 10.0, 2.0, 0.0, 0.0)
+    val trajectory = PathTrajectory(path, 1.0, 10.0, 2.0, 0.0, 0.0)
     val dt = 0.02
     var distance = 0.0
     for (i in 0 until 1000) {
         val t = i * dt
-        val state = profile.next(dt)
+        val state = trajectory.next(dt)
         val velocity = state[0]
         val angularVelocity = state[1]
         distance += velocity * dt
