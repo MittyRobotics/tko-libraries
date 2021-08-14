@@ -134,10 +134,6 @@ public fun simNext(sys: SystemModel, x0: Matrix, u: Matrix, dt: Double): Pair<Ma
     val M = expm(vstack(hstack(sys.A_(mapOf("y" to y)) * dt, sys.B_(mapOf("y" to y)) * dt), zeros(inputs, states + inputs)))
     val H = vstack(x0, u)
     val K = M * H
-    val xdot = sys.A_(mapOf("y" to y)) * x0 + sys.B_(mapOf("y" to y)) * u
-    val state = DifferentialDriveState.fromWheels(y.get2DData(1), y.get2DData(2), 20.0.inches()).calculateVector(Rotation(y.get2DData(0)))
-    println(xdot)
-    println("$state")
     return Pair(K.subMatrix(endRow = states), y)
 }
 

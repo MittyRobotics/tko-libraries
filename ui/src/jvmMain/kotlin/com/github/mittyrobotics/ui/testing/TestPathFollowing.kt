@@ -23,13 +23,12 @@ public fun main() {
     val curvatures = mutableListOf<Vector2D>()
     val trajectory = PathTrajectory(path, 1.0, 10.0, 2.0, 0.0, 0.0)
     val dt = 0.02
-    var distance = 0.0
     for (i in 0 until 1000) {
         val t = i * dt
         val state = trajectory.next(dt)
         val velocity = state[0]
         val angularVelocity = state[1]
-        distance += velocity * dt
+        val distance = trajectory.traveledDistance
         velocities.add(Vector2D(t, velocity))
         angularVelocities.add(Vector2D(t, angularVelocity))
         distancesRemaining.add(Vector2D(t, path.getGaussianQuadratureLength() - distance))
@@ -39,5 +38,4 @@ public fun main() {
     graph.plot(velocities.toTypedArray(), "Linear Velocity")
     graph.plot(angularVelocities.toTypedArray(), "Angular Velocity")
     graph.plot(distancesRemaining.toTypedArray(), "Distance Remaining")
-//    graph.plot(curvatures.toTypedArray(), "Curvature")
 }

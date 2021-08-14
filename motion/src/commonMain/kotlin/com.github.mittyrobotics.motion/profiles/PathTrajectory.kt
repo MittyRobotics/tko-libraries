@@ -1,7 +1,9 @@
 package com.github.mittyrobotics.motion.profiles
 
+import com.github.mittyrobotics.core.math.geometry.Transform
 import com.github.mittyrobotics.core.math.kinematics.DifferentialDriveState
 import com.github.mittyrobotics.core.math.spline.Parametric
+import com.github.mittyrobotics.core.math.units.inches
 import com.github.mittyrobotics.motion.State
 import kotlin.math.*
 
@@ -16,8 +18,22 @@ public class PathTrajectory(
     public val minVelocity: Double = 0.0,
     public val maxDeceleration: Double = maxAcceleration
 ): GenerativeMotionProfile() {
+    /**
+     * Returns the current traveled distance along the trajectory.
+     */
+    public var traveledDistance: Double = 0.0
+
+    /**
+     * Returns the total length of the trajectory (the path's gaussian quadrature length)
+     */
+    public val totalLength: Double = path.getGaussianQuadratureLength()
+
+    /**
+     * Returns the remaining distance of the trajectory
+     */
+    public val remainingDistance: Double
+        get()=totalLength-traveledDistance
     private var previousVelocity: Double = startVelocity
-    private var traveledDistance: Double = 0.0
     private val previewedVelocities: MutableList<Pair<Double, Double>> = mutableListOf()
 
     /**
@@ -65,6 +81,18 @@ public class PathTrajectory(
 
         return State(velocity, DifferentialDriveState.calculateAngular(velocity, 1.0/curvature))
     }
+
+    /**
+     * Returns the [Transform] on the path at the current trajectory position.
+     *
+     * A lookahead distance can be specified to preview a [Transform] at a distance ahead of the current trajectory
+     * position.
+     *
+     * @return [Transform] at the current trajectory position + lookahead distance.
+     */
+    public fun getTransform(lookahead: Double = 0.0): Transform = path.getTransform(path.getParameterFromLength(traveledDistance + lookahead))
+
+    public fun isFinished(threshold: Double = 0.5.inches()): Boolean = abs(remainingDistance) < threshold
 
     private fun min(vararg values: Double): Double{
         var min = values[0]
