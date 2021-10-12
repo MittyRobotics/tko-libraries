@@ -35,7 +35,7 @@ public fun main() {
             Transform(Vector2D(10.0, 5.0), Rotation((-45.0).degrees())),
         )
     )
-    val trajectory = PathTrajectory(path, 1.0, 1.0, 0.5)
+    val trajectory = PathTrajectory(path, 2.0, 5.0, 0.5)
 
     //Create drivetrain wheel controllers
     val feedForward = 12.0 / 5.69
@@ -60,6 +60,7 @@ public fun main() {
 
         //Get lookahead position
         val lookaheadPos = trajectory.getTransform(lookaheadDistance).vector
+
 
         //Calculate robot transform from odometry
         val robotPos =

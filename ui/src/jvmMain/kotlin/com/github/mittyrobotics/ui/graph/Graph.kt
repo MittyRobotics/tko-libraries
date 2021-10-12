@@ -28,6 +28,9 @@ import com.github.mittyrobotics.core.math.geometry.Transform
 import com.github.mittyrobotics.core.math.geometry.Vector2D
 import com.github.mittyrobotics.core.math.spline.Parametric
 import com.github.mittyrobotics.motion.models.SystemResponse
+import com.github.mittyrobotics.motion.models.step
+import com.github.mittyrobotics.motion.profiles.MotionProfile
+import com.github.mittyrobotics.motion.profiles.TrapezoidalMotionProfile
 import com.github.mittyrobotics.ui.graph.themes.DefaultDarkTheme
 import com.github.mittyrobotics.ui.graph.themes.GraphTheme
 import org.jfree.chart.ChartFactory
@@ -134,6 +137,28 @@ public open class Graph @JvmOverloads constructor(
                     color
                 )
             )
+        }
+        update()
+    }
+
+    public fun plot(
+        motionProfile: TrapezoidalMotionProfile,
+        name: String,
+        stepInterval: Double = 0.01,
+        lines: Boolean = true,
+        points: Boolean = false,
+        color: Color? = null
+    ) {
+        val initialState = motionProfile.getStateAtTime(0.0)
+        val dataArray = Array<ArrayList<Vector2D>>(initialState.states.size) { ArrayList() }
+        for (t in 0 until (motionProfile.totalTime * (1.0 / stepInterval)).toInt()) {
+            val state = motionProfile.getStateAtTime(t * stepInterval)
+            for (i in state.states.indices) {
+                dataArray[i].add(Vector2D(t * stepInterval, state.states[i]))
+            }
+        }
+        for (i in dataArray.indices) {
+            dataList.add(GraphData(dataArray[i].toTypedArray(), "$name State$i", lines, points, color))
         }
         update()
     }

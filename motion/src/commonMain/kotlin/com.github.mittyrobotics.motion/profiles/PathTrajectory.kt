@@ -18,6 +18,8 @@ public class PathTrajectory(
     public val minVelocity: Double = 0.0,
     public val maxDeceleration: Double = maxAcceleration
 ): GenerativeMotionProfile() {
+    private var autoUpdateDistance = true
+
     /**
      * Returns the current traveled distance along the trajectory.
      */
@@ -104,7 +106,9 @@ public class PathTrajectory(
 
     private fun storePreviousValues(velocity: Double, dt: Double){
         previousVelocity = velocity
-        traveledDistance += velocity*dt
+        if(autoUpdateDistance) {
+            traveledDistance += velocity * dt
+        }
     }
 
     private fun previewVelocity(distance: Double): Double = calculateSlowdownVelocity(path.getCurvature(path.getParameterFromLength(distance)))
@@ -140,5 +144,10 @@ public class PathTrajectory(
             it.second - currentDistance,
             maxDeceleration
         )
+    }
+
+    public fun manuallySetTraveledDistance(traveledDistance: Double){
+        this.autoUpdateDistance = false
+        this.traveledDistance = traveledDistance
     }
 }
