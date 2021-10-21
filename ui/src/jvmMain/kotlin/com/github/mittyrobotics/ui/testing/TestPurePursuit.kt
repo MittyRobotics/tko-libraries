@@ -22,7 +22,7 @@ import com.github.mittyrobotics.ui.graph.Graph
 public fun main() {
     //Pure pursuit controller constants
     val trackWidth = 20.0.inches()
-    val lookaheadDistance = 10.0.inches()
+    val lookaheadDistance = 20.0.inches()
 
     //Create drivetrain model
     val drivetrain = drivetrain(DCMotor.falcon500(2), 40.0.pounds(), 12.0, 1.268, 4.0.inches(), trackWidth)
@@ -33,6 +33,7 @@ public fun main() {
         arrayOf(
             Transform(Vector2D(0.0, 0.0), Rotation(0.0)),
             Transform(Vector2D(10.0, 5.0), Rotation((-45.0).degrees())),
+            Transform(Vector2D(15.0, 5.0), Rotation((20.0).degrees())),
         )
     )
     val trajectory = PathTrajectory(path, 2.0, 5.0, 0.5)
@@ -47,6 +48,7 @@ public fun main() {
 
     //Create arrays to graph values
     val robotPositions = mutableListOf<Vector2D>()
+    val lookaheadPositions = mutableListOf<Vector2D>()
     val xs = mutableListOf<Matrix>()
     val ys = mutableListOf<Matrix>()
     val us = mutableListOf<Matrix>()
@@ -58,13 +60,18 @@ public fun main() {
         //Calculate trajectory state
         val trajectoryState = trajectory.next(dt)
 
+        println(path.getParameterFromLength(trajectory.traveledDistance + lookaheadDistance))
+
         //Get lookahead position
         val lookaheadPos = trajectory.getTransform(lookaheadDistance).vector
 
+        lookaheadPositions.add(lookaheadPos)
 
         //Calculate robot transform from odometry
         val robotPos =
             odometry.update(DifferentialDriveState.fromWheels(x.get2DData(3), x.get2DData(4), trackWidth), dt)
+
+        println(lookaheadPos)
 
         //Calculate pure pursuit state
         val purePursuitState = purePursuit(robotPos, lookaheadPos, trajectoryState[0], trackWidth)
@@ -94,6 +101,8 @@ public fun main() {
         path,
         "Path"
     )
+        it.plot(lookaheadPositions.toTypedArray(), "Lookahead Position");
+
         it.scaleGraphToScale(0.02, 3.0, 0.0)
     }
 

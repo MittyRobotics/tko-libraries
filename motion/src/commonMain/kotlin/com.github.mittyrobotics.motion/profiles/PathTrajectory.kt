@@ -1,6 +1,7 @@
 package com.github.mittyrobotics.motion.profiles
 
 import com.github.mittyrobotics.core.math.geometry.Transform
+import com.github.mittyrobotics.core.math.geometry.Vector2D
 import com.github.mittyrobotics.core.math.kinematics.DifferentialDriveState
 import com.github.mittyrobotics.core.math.spline.Parametric
 import com.github.mittyrobotics.core.math.units.inches
@@ -17,7 +18,7 @@ public class PathTrajectory(
     public val endVelocity: Double = 0.0,
     public val minVelocity: Double = 0.0,
     public val maxDeceleration: Double = maxAcceleration
-): GenerativeMotionProfile() {
+) : GenerativeMotionProfile() {
     private var autoUpdateDistance = true
 
     /**
@@ -34,7 +35,7 @@ public class PathTrajectory(
      * Returns the remaining distance of the trajectory
      */
     public val remainingDistance: Double
-        get()=totalLength-traveledDistance
+        get() = totalLength - traveledDistance
     private var previousVelocity: Double = startVelocity
     private val previewedVelocities: MutableList<Pair<Double, Double>> = mutableListOf()
 
@@ -58,7 +59,7 @@ public class PathTrajectory(
         val slowdownVelocity = calculateSlowdownVelocity(curvature)
 
         //Preview slowdown velocity at future point
-        val slowdownVelocityAtPreview = previewVelocity(traveledDistance+previewDistance)
+        val slowdownVelocityAtPreview = previewVelocity(traveledDistance + previewDistance)
 
         //Remove old array values that we have traveled past
         previewedVelocities.removeAll { it.second <= traveledDistance }
@@ -81,7 +82,7 @@ public class PathTrajectory(
         //store previous values
         storePreviousValues(velocity, dt)
 
-        return State(velocity, DifferentialDriveState.calculateAngular(velocity, 1.0/curvature))
+        return State(velocity, DifferentialDriveState.calculateAngular(velocity, 1.0 / curvature))
     }
 
     /**
@@ -92,26 +93,42 @@ public class PathTrajectory(
      *
      * @return [Transform] at the current trajectory position + lookahead distance.
      */
-    public fun getTransform(lookahead: Double = 0.0): Transform = path.getTransform(path.getParameterFromLength(traveledDistance + lookahead))
+    public fun getTransform(lookahead: Double = 0.0): Transform {
+        val length = traveledDistance + lookahead
+        if (length > totalLength) {
+            val extraLength =   length - totalLength
+            val lastTransform = path.getTransform(1.0)
+            println(extraLength)
+            return Transform(
+                lastTransform.vector + Vector2D(
+                    lastTransform.rotation.cos() * extraLength,
+                    lastTransform.rotation.sin() * extraLength
+                ), lastTransform.rotation
+            )
+        } else {
+            return path.getTransform(path.getParameterFromLength(traveledDistance + lookahead))
+        }
+    }
 
     public fun isFinished(threshold: Double = 0.5.inches()): Boolean = abs(remainingDistance) < threshold
 
-    private fun min(vararg values: Double): Double{
+    private fun min(vararg values: Double): Double {
         var min = values[0]
-        for(value in values){
+        for (value in values) {
             min = kotlin.math.min(value, min)
         }
         return min
     }
 
-    private fun storePreviousValues(velocity: Double, dt: Double){
+    private fun storePreviousValues(velocity: Double, dt: Double) {
         previousVelocity = velocity
-        if(autoUpdateDistance) {
+        if (autoUpdateDistance) {
             traveledDistance += velocity * dt
         }
     }
 
-    private fun previewVelocity(distance: Double): Double = calculateSlowdownVelocity(path.getCurvature(path.getParameterFromLength(distance)))
+    private fun previewVelocity(distance: Double): Double =
+        calculateSlowdownVelocity(path.getCurvature(path.getParameterFromLength(distance)))
 
     private fun calculateSlowdownVelocity(curvature: Double): Double =
         max(abs(DifferentialDriveState.calculateLinear(maxAngularVelocity, 1.0 / curvature)), minVelocity)
@@ -146,7 +163,7 @@ public class PathTrajectory(
         )
     }
 
-    public fun manuallySetTraveledDistance(traveledDistance: Double){
+    public fun manuallySetTraveledDistance(traveledDistance: Double) {
         this.autoUpdateDistance = false
         this.traveledDistance = traveledDistance
     }
