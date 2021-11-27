@@ -49,7 +49,7 @@ public fun main(){
     val elevator = elevator(DCMotor.neo(2), 20.0.pounds(), 10.0, 4.0.inches())
     val drivetrain = drivetrain(DCMotor.falcon500(2), 40.0.pounds(), 12.0, 1.268, 4.0.inches(), 20.0.inches())
 
-    val sim = sim(drivetrain, Matrix.column(doubleArrayOf(4.0, 3.0)), 20.0)
+    val sim = sim(drivetrain, Matrix.column(doubleArrayOf(12.0, .0)), 20.0)
     val robotPos = Array(sim.x.size){Vector2D( sim.x[it].get2DData(0), sim.x[it].get2DData(1))}
 
     val vectors = mutableListOf(Vector2D())

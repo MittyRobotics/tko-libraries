@@ -95,6 +95,4 @@ public fun main() {
     )
         it.scaleGraphToScale(0.02, 3.0, 0.0)
     }
-
-
 }

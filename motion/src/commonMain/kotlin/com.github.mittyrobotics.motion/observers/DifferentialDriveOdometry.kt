@@ -16,7 +16,8 @@ public class DifferentialDriveOdometry(public val trackWidth: Double) {
     }
 
     public fun update(state: DifferentialDriveState, dt: Double): Transform {
-        transform.radians += state.theta*dt
+        transform.radians += state.angular * dt
+
         transform.vector += state.calculateVector(transform.rotation) * dt
         return transform
     }
