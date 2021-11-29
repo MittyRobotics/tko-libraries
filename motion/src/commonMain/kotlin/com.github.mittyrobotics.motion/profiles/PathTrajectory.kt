@@ -137,7 +137,7 @@ public class PathTrajectory(
         currentVelocity: Double,
         slowdownVelocity: Double,
         maxDeceleration: Double
-    ): Double = (currentVelocity - slowdownVelocity).pow(2.0) / (2 * maxDeceleration)
+    ): Double = (currentVelocity*currentVelocity - slowdownVelocity*slowdownVelocity) / (2 * maxDeceleration)
 
     private fun calculateMaxVelocityFromDistance(
         endVelocity: Double,
