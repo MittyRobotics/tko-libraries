@@ -9,7 +9,6 @@ public data class DifferentialDriveState(
     public val angular: Double,
     public val left: Double,
     public val right: Double,
-    public val theta: Double,
     public val trackWidth: Double
 ) {
 
@@ -20,14 +19,13 @@ public data class DifferentialDriveState(
     public companion object {
         public fun fromLinearAndAngular(linear: Double, angular: Double, trackWidth: Double): DifferentialDriveState {
             if(angular.absoluteValue < 2e-9){
-                return DifferentialDriveState(linear, angular, linear, linear, 0.0, trackWidth)
+                return DifferentialDriveState(linear, angular, linear, linear, trackWidth)
             }
             else{
                 val radius = linear / angular
                 val left = angular * (radius - trackWidth / 2)
                 val right = angular * (radius + trackWidth / 2)
-                val theta = (right-left)/(2.0*trackWidth)
-                return DifferentialDriveState(linear, angular, left, right, theta, trackWidth)
+                return DifferentialDriveState(linear, angular, left, right, trackWidth)
             }
         }
 
@@ -44,7 +42,7 @@ public data class DifferentialDriveState(
             fromAngularAndRadius(angular, 1.0/curvature,  trackWidth)
 
         public fun fromWheels(left: Double, right: Double, trackWidth: Double): DifferentialDriveState =
-            DifferentialDriveState((left + right) / 2.0, (2 * (right - left)) / trackWidth, left, right, (right-left)/(2.0*trackWidth), trackWidth)
+            DifferentialDriveState((left + right) / 2.0, ((right - left)) / trackWidth, left, right, trackWidth)
 
         public fun calculateLinear(angular: Double, radius: Double): Double = radius*angular
 

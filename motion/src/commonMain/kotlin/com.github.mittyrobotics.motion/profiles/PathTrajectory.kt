@@ -144,7 +144,7 @@ public class PathTrajectory(
         distance: Double,
         maxDeceleration: Double
     ): Double = if (distance > 0) {
-        sqrt(endVelocity * endVelocity + 2 * maxDeceleration * distance)
+        sqrt(endVelocity * endVelocity - 2 * -maxDeceleration * distance)
     } else {
         0.0
     }
