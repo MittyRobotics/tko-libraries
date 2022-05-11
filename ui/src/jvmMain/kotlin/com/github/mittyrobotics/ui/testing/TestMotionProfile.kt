@@ -1,12 +1,16 @@
 package com.github.mittyrobotics.ui.testing
 
-import com.github.mittyrobotics.core.math.geometry.Vector2D
 import com.github.mittyrobotics.motion.State
-import com.github.mittyrobotics.motion.models.SystemResponse
 import com.github.mittyrobotics.motion.profiles.TrapezoidalMotionProfile
 import com.github.mittyrobotics.ui.graph.Graph
+import kotlin.math.max
 
 public fun main(){
-    val motionProfile = TrapezoidalMotionProfile(State(0.0, 0.0), State(259.49, 0.0), State(100.0, 100.0), State(100.0, 100.0))
-    Graph().plot(Array(100){ Vector2D((it/100.0)*motionProfile.totalTime, motionProfile.getStateAtTime((it/100.0)*motionProfile.totalTime)[0])}, "System")
+    val initialState = State().position(0.0).velocity(0.0)
+    val finalState = State().position(20.0).velocity(0.0)
+    val maxState = State().position(3.0).velocity(1.0)
+    val minState = State().position(3.0).velocity(1.0)
+    val profile = TrapezoidalMotionProfile(initialState, finalState, maxState, minState)
+    Graph().plot(profile, "Motion Profile")
+
 }

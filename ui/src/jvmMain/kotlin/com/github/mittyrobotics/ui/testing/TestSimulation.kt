@@ -29,6 +29,7 @@ import com.github.mittyrobotics.core.math.kinematics.DifferentialDriveState
 import com.github.mittyrobotics.core.math.linalg.Matrix
 import com.github.mittyrobotics.core.math.units.inches
 import com.github.mittyrobotics.core.math.units.pounds
+import com.github.mittyrobotics.motion.State
 import com.github.mittyrobotics.motion.models.*
 import com.github.mittyrobotics.motion.models.motors.DCMotor
 import com.github.mittyrobotics.motion.observers.DifferentialDriveOdometry
@@ -40,6 +41,7 @@ public fun main(){
     val Kp = 2.0
     val tau = 1.0
     val zeta = 0.25
+
 
     val A = Matrix(arrayOf(doubleArrayOf(0.0, 1.0), doubleArrayOf(-1.0/tau.pow(2.0), -2.0*zeta/tau)))
     val B = Matrix(arrayOf(doubleArrayOf(0.0), doubleArrayOf(Kp/tau.pow(2.0))))
