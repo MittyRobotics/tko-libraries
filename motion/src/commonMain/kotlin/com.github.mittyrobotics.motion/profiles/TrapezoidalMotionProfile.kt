@@ -52,7 +52,8 @@ public class TrapezoidalMotionProfile(
     public override fun getStateAtTime(t: Double): State = when {
         t <= accelerationTime -> State(pa(t), dpa(t), ddpa())
         t <= cruiseTime -> State(pc(t), dpc(), ddpc())
-        else -> State(pd(t), dpd(t), ddpd())
+        t <= totalTime -> State(pd(t), dpd(t), ddpd())
+        else -> State(pt, vf, 0.0)
     }
 
     private fun pa(t: Double) = am * (t * t) / 2 + vi * t + pi

@@ -37,6 +37,30 @@ public fun elevator(motor: DCMotor, m: Double, G: Double, r: Double): SystemMode
         Matrix(arrayOf(doubleArrayOf(0.0)))
     )
 
+public fun flywheel(motor: DCMotor, G: Double, J: Double): SystemModel =
+    SystemModel(
+        Matrix(
+            arrayOf(
+                doubleArrayOf(-G*G*motor.kt/(motor.kv*motor.resistance*J))
+            )
+        ),
+        Matrix(
+            arrayOf(
+                doubleArrayOf(G*motor.kt/(motor.resistance*J))
+            )
+        ),
+        Matrix(
+            arrayOf(
+                doubleArrayOf(1.1)
+            )
+        ),
+        Matrix(
+            arrayOf(
+                doubleArrayOf(0.0)
+            )
+        )
+    )
+
 /**
  * Creates a drivetrain [SystemModel].
  *

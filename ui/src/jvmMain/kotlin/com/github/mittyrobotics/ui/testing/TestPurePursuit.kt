@@ -18,7 +18,6 @@ import com.github.mittyrobotics.motion.models.simNext
 import com.github.mittyrobotics.motion.observers.DifferentialDriveOdometry
 import com.github.mittyrobotics.motion.profiles.PathTrajectory
 import com.github.mittyrobotics.ui.graph.Graph
-
 public fun main() {
     //Pure pursuit controller constants
     val trackWidth = 20.0.inches()

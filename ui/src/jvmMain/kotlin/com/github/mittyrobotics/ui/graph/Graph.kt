@@ -43,7 +43,9 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
 import org.jfree.data.xy.XYDataItem
 import org.jfree.data.xy.XYSeries
 import org.jfree.data.xy.XYSeriesCollection
+import java.awt.BasicStroke
 import java.awt.Color
+import java.awt.Stroke
 import java.text.DecimalFormat
 import javax.swing.BorderFactory
 import javax.swing.JFrame
@@ -186,6 +188,7 @@ public open class Graph @JvmOverloads constructor(
                         false
                     ).also { series -> dataList[i].data.forEach { series.add(XYDataItem(it.x, it.y)) } })
                 defaultRenderer.setSeriesPaint(i, dataList[i].color)
+                defaultRenderer.setSeriesStroke(i, BasicStroke(2f))
                 defaultRenderer.setSeriesLinesVisible(i, dataList[i].lines)
                 defaultRenderer.setSeriesShapesVisible(i, dataList[i].points)
             }

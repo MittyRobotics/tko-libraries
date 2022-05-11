@@ -29,11 +29,13 @@ kotlin {
             dependencies {
                 implementation(project(":core"))
                 implementation(project(":motion"))
+
             }
         }
         val jvmMain by getting {
             dependencies {
-                implementation( "org.jfree:jfreechart:1.5.0") }
+                implementation( "org.jfree:jfreechart:1.5.0")
+            }
         }
     }
 }
